@@ -1,7 +1,7 @@
 # sbt
 # (may want to keep parts of 'project')
 bin/
-project/
+project/target
 target/
 build/
 
@@ -11,7 +11,6 @@ build/
 *.ipr
 *.iws
 .idea
-*.cs
 
 # mac
 .DS_Store
@@ -24,3 +23,4 @@ build/
 
 #general
 *.class
+*.cs

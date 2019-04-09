@@ -50,6 +50,20 @@ object List {
     case _ => xs
   }
 
+  def foldRight[A, B](xs: List[A], init: B)(f: (A, B) => B): B = xs match {
+    case Nil => init
+//    case Cons(h, t) => foldRight(t, f(h, init))(f)
+    case Cons(h, t) => f(h, foldRight(t, init)(f))
+  }
+
+  // TODO which different between right/left fold???
+  def foldLeft[A, B](xs: List[A], init: B)(f: (B, A) => B): B = xs match {
+    case Nil => init
+    case Cons(h, t) => foldLeft(t, f(init, h))(f)
+  }
+
+  def length[A](xs: List[A]): Int = foldRight(xs, 0)((_, a: Int) => a + 1)
+
   def sum(ints: List[Int]): Int = ints match {
     case Nil => 0
     case Cons(h, t) => h + sum(t)
@@ -60,4 +74,8 @@ object List {
     case Cons(h @ 0.0, _) => h
     case Cons(h, t) => h * product(t)
   }
+
+  def productFold(nums: List[Double]): Double = foldRight(nums, 1.0)(_ * _)
+
+  def productLeftFOld(nums: List[Double]): Double = foldLeft(nums, 1.0)(_ * _)
 }

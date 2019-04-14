@@ -7,7 +7,6 @@ build/
 
 # intellij idea
 *.log
-*.iml
 *.ipr
 *.iws
 .idea
@@ -16,11 +15,9 @@ build/
 .DS_Store
 
 # other?
-.history
 .scala_dependencies
 .cache
 .cache-main
 
 #general
-*.class
 *.cs

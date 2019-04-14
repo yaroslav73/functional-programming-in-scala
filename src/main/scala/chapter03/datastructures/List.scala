@@ -10,6 +10,12 @@ object List {
     else Cons(elems.head, apply(elems.tail: _*))
   }
 
+  def append[A](l1: List[A], l2: List[A]): List[A] = l2 match {
+    case Nil => l1
+    case Cons(h, t) => Cons(h, append(l1, t))
+//    case Cons(h, t) => append(Cons(h, l1), t)
+  }
+
   def head[A](xs: List[A]): A = xs match {
     case Nil => throw new NoSuchElementException("head of empty list")
     case Cons(h, _) => h
@@ -28,7 +34,7 @@ object List {
 
   // TODO: reverse List
   def init[A](xs: List[A]): List[A] = {
-    def loop[A](xs: List[A], res: List[A]): List[A] = {
+    def loop(xs: List[A], res: List[A]): List[A] = {
       xs match {
         case Nil => xs
         case Cons(h, t) =>
@@ -64,10 +70,25 @@ object List {
 
   def length[A](xs: List[A]): Int = foldRight(xs, 0)((_, a: Int) => a + 1)
 
+  def reverse[A](xs: List[A]): List[A] = {
+    def loop(xs: List[A], init: List[A]): List[A] = {
+      xs match {
+        case Nil => init
+        case Cons(h, t) => loop(t, Cons(h, init))
+      }
+    }
+
+    loop(xs, Nil)
+  }
+
+  def reverseFold[A](xs: List[A]): List[A] = foldLeft(xs, Nil:List[A])((init: List[A], x: A) => Cons(x, init))
+
   def sum(ints: List[Int]): Int = ints match {
     case Nil => 0
     case Cons(h, t) => h + sum(t)
   }
+
+  def sumFoldLeft(ints: List[Int]): Int = foldLeft(ints, 0)(_ + _)
 
   def product(nums: List[Double]): Double = nums match {
     case Nil => 1.0
@@ -77,5 +98,5 @@ object List {
 
   def productFold(nums: List[Double]): Double = foldRight(nums, 1.0)(_ * _)
 
-  def productLeftFOld(nums: List[Double]): Double = foldLeft(nums, 1.0)(_ * _)
+  def productFoldLeft(nums: List[Double]): Double = foldLeft(nums, 1.0)(_ * _)
 }

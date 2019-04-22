@@ -81,11 +81,32 @@ object List {
     loop(xs, Nil)
   }
 
+  def map[A, B](xs: List[A])(f: A => B): List[B] = xs match {
+    case Nil => Nil
+    case Cons(h, t) => Cons(f(h), map(t)(f))
+  }
+
+  def filter[A](xs: List[A])(f: A => Boolean): List[A] = xs match {
+    case Nil => xs
+    case Cons(h, t) if f(h) => Cons(h, filter(t)(f))
+    case Cons(_, t) => filter(t)(f)
+  }
+
   def reverseFold[A](xs: List[A]): List[A] = foldLeft(xs, Nil:List[A])((init: List[A], x: A) => Cons(x, init))
 
   def sum(ints: List[Int]): Int = ints match {
     case Nil => 0
     case Cons(h, t) => h + sum(t)
+  }
+
+  def addOne(ints: List[Int]): List[Int] = ints match {
+    case Nil => ints
+    case Cons(h, t) => Cons(h + 1, addOne(t))
+  }
+
+  def double2String(nums: List[Double]): List[String] = nums match {
+    case Nil => Nil:List[String]
+    case Cons(h, t) => Cons(h.toString, double2String(t))
   }
 
   def sumFoldLeft(ints: List[Int]): Int = foldLeft(ints, 0)(_ + _)

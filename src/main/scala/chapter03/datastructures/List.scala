@@ -86,11 +86,30 @@ object List {
     case Cons(h, t) => Cons(f(h), map(t)(f))
   }
 
+  def flatMap[A, B](xs: List[A])(f: A => List[B]): List[B] = xs match {
+    case Nil => Nil:List[B]
+    case Cons(h, t) => append(f(h), flatMap(t)(f))
+  }
+
   def filter[A](xs: List[A])(f: A => Boolean): List[A] = xs match {
     case Nil => xs
     case Cons(h, t) if f(h) => Cons(h, filter(t)(f))
     case Cons(_, t) => filter(t)(f)
   }
+
+  def zipWith[A](l1: List[A], l2: List[A])(f: (A, A) => A): List[A] = l1 match {
+    case Nil => Nil
+    case Cons(h, t) => Cons(f(h, head(l2)), zipWith(t, tail(l2))(f))
+  }
+
+  def hasSubsequence[A](sup: List[A], sub: List[A]): Boolean = sub match {
+    case Nil => true
+    case Cons(h, t) if h == head(sup) => hasSubsequence(t, tail(sup))
+    case Cons(_, t) => hasSubsequence(sup, t)
+  }
+
+  def filterFlatMap[A](xs: List[A])(f: A => Boolean): List[A] =
+    flatMap(xs)(h => if (f(h)) Cons(h, Nil) else Nil)
 
   def reverseFold[A](xs: List[A]): List[A] = foldLeft(xs, Nil:List[A])((init: List[A], x: A) => Cons(x, init))
 
@@ -103,6 +122,8 @@ object List {
     case Nil => ints
     case Cons(h, t) => Cons(h + 1, addOne(t))
   }
+
+  def addIntLists(l1: List[Int], l2: List[Int]): List[Int] = flatMap(l1)(a => map(l2)(b => a + b))
 
   def double2String(nums: List[Double]): List[String] = nums match {
     case Nil => Nil:List[String]

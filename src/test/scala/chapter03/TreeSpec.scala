@@ -6,9 +6,9 @@ import org.scalatest.{Ignore, WordSpec}
 class TreeSpec extends WordSpec {
   "A Tree" when {
     "have 2 Leafs" should {
-      "have size 2" in {
+      "have calculate size 2 with fold" in {
         val tree = Branch(Leaf(0), Leaf(1))
-        assert(Tree.size(tree) == 2)
+        assert(Tree.fold(tree, 0)((_, acc) => acc + 1) == 2)
       }
     }
 
@@ -22,7 +22,7 @@ class TreeSpec extends WordSpec {
     "contains (3, 1, 4, 2)" should {
       "return maximus is 4" in {
         val tree = Branch(Branch(Leaf(3), Leaf(1)), Branch(Leaf(4), Leaf(1)))
-        assert(Tree.maximum(tree) == 4)
+        assert(Tree.size(tree) == 4)
       }
     }
 
@@ -74,6 +74,32 @@ class TreeSpec extends WordSpec {
         )
 
         assert(Tree.depth(tree) == 3)
+      }
+    }
+
+    "apply map for increase leaf values by 1" should {
+      "return tree with increases values" in {
+        val tree = Branch(
+          Branch(
+            Leaf(2),
+            Leaf(3)
+          ),
+          Branch(
+            Leaf(5),
+            Leaf(6)),
+        )
+
+        val expected = Branch(
+          Branch(
+            Leaf(3),
+            Leaf(4)
+          ),
+          Branch(
+            Leaf(6),
+            Leaf(7)),
+        )
+
+        assert(Tree.map(tree)(_ + 1) == expected)
       }
     }
   }

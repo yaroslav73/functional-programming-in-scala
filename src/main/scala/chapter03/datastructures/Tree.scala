@@ -22,7 +22,13 @@ object Tree {
     case Branch(left, right) => 1 + (depth(left) max depth(right))
   }
 
-  def map[A, B](tree: Tree[A])(f: A => B): Tree[B] = ???
+  def map[A, B](tree: Tree[A])(f: A => B): Tree[B] = tree match {
+    case Leaf(value) => Leaf(f(value))
+    case Branch(left, right) => Branch(map(left)(f), map(right)(f))
+  }
 
-  def fold[A](tree: Tree[A]): A = ???
+  def fold[A, B](tree: Tree[A], init: B)(f: (A, B) => B): B = tree match {
+    case Leaf(value) => f(value, init)
+    case Branch(left, right) => fold(left, fold(right, init)(f))(f)
+  }
 }

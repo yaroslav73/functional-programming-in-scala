@@ -11,7 +11,7 @@ object Tree {
 
   def depth[A](tree: Tree[A]): Int = fold(tree)(_ => 1)((l, r) => 1 + (l max r))
 
-  def map[A, B](tree: Tree[A])(f: A => B): Tree[B] = fold(tree)(e => Leaf(f(e)).asInstanceOf[Tree[B]])((l, r) => Branch(l, r))
+  def map[A, B](tree: Tree[A])(f: A => B): Tree[B] = fold(tree)(elem => Leaf(f(elem)): Tree[B])((l, r) => Branch(l, r))
 
   def oldMap[A, B](tree: Tree[A])(f: A => B): Tree[B] = tree match {
     case Leaf(value) => Leaf(f(value))

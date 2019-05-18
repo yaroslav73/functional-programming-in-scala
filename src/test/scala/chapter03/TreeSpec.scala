@@ -8,7 +8,7 @@ class TreeSpec extends WordSpec {
     "have 2 Leafs" should {
       "have calculate size 2 with fold" in {
         val tree = Branch(Leaf(0), Leaf(1))
-        assert(Tree.fold(tree, 0)((_, acc) => acc + 1) == 2)
+        assert(Tree.fold(tree)(_ => 1)(_ + _) == 2)
       }
     }
 
@@ -73,7 +73,7 @@ class TreeSpec extends WordSpec {
             Leaf(6)),
         )
 
-        assert(Tree.depth(tree) == 3)
+        assert(Tree.fold(tree)(_ => 1)((l, r) => 1 + (l max r)) == 3)
       }
     }
 

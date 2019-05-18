@@ -78,7 +78,7 @@ class TreeSpec extends WordSpec {
     }
 
     "apply map for increase leaf values by 1" should {
-      "return tree with increases values" in {
+      "return tree with increases values by 1" in {
         val tree = Branch(
           Branch(
             Leaf(2),

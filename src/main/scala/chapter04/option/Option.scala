@@ -30,11 +30,21 @@ sealed trait Option[+A] {
     case Some(value) if f(value) => Some(value)
     case _ => None
   }
+
+  def lift[A, B](f: A => B): Option[A] => Option[B] = _ map f
 }
 
 case class Some[+A](value: A) extends Option[A]
 case object None extends Option[Nothing]
 
 object Option {
+  // Combine two Option values using binary function.
+  // If either value is None, then return value is too.
+  def map2[A, B, C](a: Option[A], b: Option[B])(f: (A, B) => C): Option[C] = {
+    a flatMap  { i =>
+      b map { j => f(i, j) }
+    }
+  }
+
   def mean(xs: Seq[Double]): Option[Double] = if (xs.isEmpty) None else Some(xs.sum / xs.length)
 }

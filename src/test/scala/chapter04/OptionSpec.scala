@@ -81,5 +81,32 @@ class OptionSpec extends WordSpec {
         assert(none.filter(_.isNaN) == None)
       }
     }
+
+    "apply map2 and sum on two Some(Int)" should {
+      "return Some(sum of two Int)" in {
+        val a: Option[Int] = Some(7)
+        val b: Option[Int] = Some(30)
+
+        assert(Option.map2(a, b)(_ + _) == Some(37))
+      }
+    }
+
+    "apply map2 and sum on Some(Int) and None" should {
+      "return None" in {
+        val a: Option[Int] = Some(7)
+        val b: Option[Int] = None
+
+        assert(Option.map2(a, b)(_ + _) == None)
+      }
+    }
+
+    "apply map2 and sum on two None" should {
+      "return None" in {
+        val a: Option[Int] = None
+        val b: Option[Int] = None
+
+        assert(Option.map2(a, b)(_ + _) == None)
+      }
+    }
   }
 }

@@ -35,15 +35,27 @@ sealed trait Option[+A] {
 }
 
 case class Some[+A](value: A) extends Option[A]
+
 case object None extends Option[Nothing]
 
 object Option {
   // Combine two Option values using binary function.
   // If either value is None, then return value is too.
   def map2[A, B, C](a: Option[A], b: Option[B])(f: (A, B) => C): Option[C] = {
-    a flatMap  { i =>
+    a flatMap { i =>
       b map { j => f(i, j) }
     }
+  }
+
+  def sequence[A](l: List[Option[A]]): Option[List[A]] = {
+    l match {
+      case Nil => Some(List.empty[A])
+      case head :: tail => head flatMap { h => sequence(tail) map { list => h :: list } }
+    }
+  }
+
+  def traverse[A, B](l: List[A])(f: A => Option[B]): Option[List[B]] = {
+    sequence(l map f)
   }
 
   def mean(xs: Seq[Double]): Option[Double] = if (xs.isEmpty) None else Some(xs.sum / xs.length)

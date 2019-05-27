@@ -108,5 +108,51 @@ class OptionSpec extends WordSpec {
         assert(Option.map2(a, b)(_ + _) == None)
       }
     }
+
+    "apply sequence to List[Option[String]]" should {
+      "should return Option[List[String]]" in {
+        val listOfOption: List[Option[String]] = List(Some("one"), Some("two"), Some("three"))
+        assert(Option.sequence(listOfOption) == Some(List("one", "two", "three")))
+      }
+    }
+
+    "apply sequence to List[Option[String]] that contains None" should {
+      "should return None" in {
+        val listOfOption: List[Option[String]] = List(Some("one"), None, Some("three"))
+        assert(Option.sequence(listOfOption) == None)
+      }
+    }
+
+    "apply sequence to List[None]" should {
+      "should return None" in {
+        val listOfOption: List[Option[String]] = List(None)
+        assert(Option.sequence(listOfOption) == None)
+      }
+    }
+
+    "apply traverse to List[String] with function that parse String to Int" should {
+      "should return Option[List[Int]] if all OK" in {
+        val list: List[String] = List("1", "21", "121", "73")
+        assert(Option.traverse(list)(parseToInt) == Some(List(1, 21, 121, 73)))
+      }
+    }
+
+    "apply traverse to List[String] with function that parse String to Int" should {
+      "should return None if List contains wrong String" in {
+        val list: List[String] = List("1", "21a", "73")
+        assert(Option.traverse(list)(parseToInt) == None)
+      }
+    }
+
+    "apply traverse to empty List[String] with function that parse String to Int" should {
+      "should return Option[List.empty[Int]]" in {
+        val list: List[String] = List()
+        assert(Option.traverse(list)(parseToInt) == Some(List.empty[Int]))
+      }
+    }
   }
+
+  private def parseToInt(s: String): Option[Int] = try {
+    Some(s.toInt)
+  } catch { case e: NumberFormatException => None}
 }

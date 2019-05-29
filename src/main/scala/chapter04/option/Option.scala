@@ -21,7 +21,7 @@ sealed trait Option[+A] {
 
   // Don't evaluate ob unless needed
   def orElse[B >: A](ob: Option[B]): Option[B] = this match {
-    case Some(value) => Some(value)
+    case Some(_) => this
     case None => ob
   }
 

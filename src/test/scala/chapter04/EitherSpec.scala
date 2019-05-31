@@ -73,6 +73,35 @@ class EitherSpec extends WordSpec {
         assert(first.map2(second)(_ / _) == Left("Something went wrong..."))
       }
     }
+
+    "apply sequence for List[Either[String, Int]] without Left" should {
+      "should return Either[String, List[Int]]" in {
+        val list: List[Either[String, Int]] = List(Right(1), Right(2), Right(3))
+        assert(Either.sequence(list) == Right(List(1, 2, 3)))
+      }
+    }
+
+    "apply sequence for List[Either[String, Int]] with Left" should {
+      "should return Left[String, List[Int]]" in {
+        val list: List[Either[String, Int]] = List(Right(1), Left("Something went wrong..."), Right(3))
+        assert(Either.sequence(list) == Left("Something went wrong..."))
+      }
+    }
+
+    "apply traverse by List[String] with method tryStringLength" should {
+      "should return Right[String, List[Int]]" in {
+        val list: List[String] = List("hello", "darkness", "my", "old", "friend")
+        assert(Either.traverse(list)(tryStringLength) == Right(List(5, 8, 2, 3, 6)))
+      }
+    }
+
+    "apply traverse by List[String] with method tryStringLength" should {
+      "should return Left[String, List[Int]]" in {
+        case class Person(name: String)
+        val list: List[AnyRef] = List("hello", "darkness", "my", Person("Andrew"), "friend")
+        assert(Either.traverse(list)(tryStringLength) == Left("Person(Andrew) is not a String :("))
+      }
+    }
   }
 
   def tryStringLength(any: AnyRef): Either[String, Int] = any match {

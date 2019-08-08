@@ -3,7 +3,6 @@ package chapter05
 import org.scalatest.WordSpec
 
 class StreamSpec extends WordSpec {
-  import chapter05._
 
   "A Stream" when {
     "call function fibs should be generates stream of Fibonacci numbers" in {

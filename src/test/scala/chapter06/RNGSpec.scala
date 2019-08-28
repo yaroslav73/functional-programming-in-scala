@@ -24,5 +24,35 @@ class RNGSpec extends WordSpec {
       assert(n1 != n2)
       assert(newRng1 != newRng2)
     }
+
+    "call nonNegativeInt should not return negative values" in {
+      val rng = SimpleRNG(0)
+      for (n <- 1 to 1000000) assert(rng.nonNegativeInt(SimpleRNG(n))._1 >= 0)
+    }
+
+    "call double should return a double between 0 and 1, not including 1" in {
+      val initRng = SimpleRNG(0)
+      for (n <- 1 to 1000000) {
+        val doubleRng = initRng.double(SimpleRNG(n))
+        assert(doubleRng._1 >= 0 && doubleRng._1 < 1)
+      }
+    }
+
+    "call intDouble should return pair of int that should non-negative and double between 0 and 1" in {
+      val initRng = SimpleRNG(0)
+      for (n <- 1 to 1000000) {
+        val ((intVal, doubleVal), rng) =initRng.intDouble(SimpleRNG(n))
+        assert(intVal >= 0)
+        assert(doubleVal < 1)
+        assert(doubleVal >= 0)
+      }
+    }
+
+    "call ints should return List of random integer" in {
+      val initRng = SimpleRNG(1)
+      val (list, _) = initRng.ints(7)(initRng)
+      assert(list.size == 7)
+      assert(list.count(_ != list.head) == 6)
+    }
   }
 }

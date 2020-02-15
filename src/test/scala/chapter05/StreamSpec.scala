@@ -1,8 +1,8 @@
 package chapter05
 
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 
-class StreamSpec extends WordSpec {
+class StreamSpec extends AnyWordSpec {
 
   "A Stream" when {
     "call function fibs should be generates stream of Fibonacci numbers" in {

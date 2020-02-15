@@ -1,8 +1,8 @@
 package chapter06
 
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 
-class RNGSpec extends WordSpec {
+class RNGSpec extends AnyWordSpec {
   "A Simple RNG" when {
     "call nextInt with the same seed should return same value" in {
       val rng1 = SimpleRNG(42)
@@ -26,26 +26,51 @@ class RNGSpec extends WordSpec {
     }
 
     "call nonNegativeInt should not return negative values" in {
-      val rng = SimpleRNG(0)
-      for (n <- 1 to 1000000) assert(rng.nonNegativeInt(SimpleRNG(n))._1 >= 0)
+      for (n <- 1 to 1000000) {
+        val rng = SimpleRNG(n)
+        assert(rng.nonNegativeInt(rng)._1 >= 0)
+      }
     }
 
-    "call double should return a double between 0 and 1, not including 1" in {
-      val initRng = SimpleRNG(0)
-      for (n <- 1 to 1000000) {
-        val doubleRng = initRng.double(SimpleRNG(n))
-        assert(doubleRng._1 >= 0 && doubleRng._1 < 1)
+    "call nonNegativeInt should return positive value for Int.MinValue seed" in {
+      val rng = SimpleRNG(Int.MinValue)
+      assert(rng.nonNegativeInt(rng)._1 >= 0)
+    }
+
+    "call double method should return a double between 0 and 1, not including 1" in {
+      for (n <- 0 to 1000000) {
+        val rng = SimpleRNG(n)
+        val (doubleRNGValue, _) = rng.double(rng)
+        assert(doubleRNGValue >= 0 && doubleRNGValue < 1)
       }
     }
 
     "call intDouble should return pair of int that should non-negative and double between 0 and 1" in {
-      val initRng = SimpleRNG(0)
       for (n <- 1 to 1000000) {
-        val ((intVal, doubleVal), rng) =initRng.intDouble(SimpleRNG(n))
+        val rng = SimpleRNG(n)
+        val ((intVal, doubleVal), _) = rng.intDouble(rng)
         assert(intVal >= 0)
         assert(doubleVal < 1)
         assert(doubleVal >= 0)
       }
+    }
+
+    "doubleInt should return same values as intDouble with same seed" in {
+      val rng = SimpleRNG(77)
+      val ((dVal1, iVal1), _) = rng.doubleInt(rng)
+      val ((iVal2, dVal2), _) = rng.intDouble(rng)
+
+      assert(dVal1 == dVal2)
+      assert(iVal1 == iVal2)
+    }
+
+    "double3 should return 3 double value and new RNG" in {
+      val rng = SimpleRNG(123)
+      val ((d1, d2, d3), _) = rng.double3(rng)
+
+      assert(d1 >= 0 && d1 < 1)
+      assert(d2 >= 0 && d2 < 1)
+      assert(d3 >= 0 && d3 < 1)
     }
 
     "call ints should return List of random integer" in {

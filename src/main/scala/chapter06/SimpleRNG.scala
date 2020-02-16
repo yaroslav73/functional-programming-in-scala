@@ -81,10 +81,9 @@ case class SimpleRNG(seed: Long) extends RNG {
     g(a)(rng2)
   }
 
-  def nonNegativeLessThan(n: Int): Rand[Int] = { rng =>
-    val (i, rng2) = nonNegativeInt(rng)
+  def nonNegativeLessThan(n: Int): Rand[Int] = flatMap(nonNegativeInt) { i =>
     val mod = i % n
-    if (i + (n - 1) - mod >= 0) (mod, rng2)
-    else nonNegativeLessThan(n)(rng)
+    if (i + (n - 1) - mod >= 0) unit(mod)
+    else nonNegativeLessThan(n)
   }
 }

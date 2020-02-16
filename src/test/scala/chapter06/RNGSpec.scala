@@ -86,8 +86,8 @@ class RNGSpec extends AnyWordSpec {
     }
 
     "call nonNegativeLessThan should return Rand[Int] with correct boundary" in {
-      val rng = SimpleRNG(1)
-      println(rng.nonNegativeLessThan(6)(rng)._1)
+      val rng = SimpleRNG(5)
+      assert(rng.nonNegativeLessThan(6)(rng)._1 == 0)
     }
   }
 }

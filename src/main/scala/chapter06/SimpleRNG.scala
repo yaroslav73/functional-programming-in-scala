@@ -62,10 +62,29 @@ case class SimpleRNG(seed: Long) extends RNG {
 
   val randDoubleInt: Rand[(Double, Int)] = both(double, int)
 
+  // TODO you can improve it
+  // You need to recursively iterate over the list.
+  // Remember that you can use `foldLeft` or `foldRight`
+  // instead of writing a recursive definition.
+  // You can also reuse the `map2` function you just wrote.
+  // As a test case for your implementation, we should expect
+  // `sequence(List(unit(1), unit(2), unit(3)))(r)._1` to return `List(1, 2, 3)`.
   def sequence[A](fs: List[Rand[A]]): Rand[List[A]] = rng => fs match {
     case Nil => (List.empty[A], rng)
     case head :: tail =>
       val (value, newRng) = head(rng)
       (List(value) ::: sequence(tail)(newRng)._1, newRng)
+  }
+
+  def flatMap[A, B](f: Rand[A])(g: A => Rand[B]): Rand[B] = rng => {
+    val (a, rng2) = f(rng)
+    g(a)(rng2)
+  }
+
+  def nonNegativeLessThan(n: Int): Rand[Int] = { rng =>
+    val (i, rng2) = nonNegativeInt(rng)
+    val mod = i % n
+    if (i + (n - 1) - mod >= 0) (mod, rng2)
+    else nonNegativeLessThan(n)(rng)
   }
 }

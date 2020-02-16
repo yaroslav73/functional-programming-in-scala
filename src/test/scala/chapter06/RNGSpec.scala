@@ -40,7 +40,7 @@ class RNGSpec extends AnyWordSpec {
     "call double method should return a double between 0 and 1, not including 1" in {
       for (n <- 0 to 1000000) {
         val rng = SimpleRNG(n)
-        val (doubleRNGValue, _) = rng.double(rng)
+        val doubleRNGValue = rng.double(rng)._1
         assert(doubleRNGValue >= 0 && doubleRNGValue < 1)
       }
     }
@@ -77,7 +77,12 @@ class RNGSpec extends AnyWordSpec {
       val initRng = SimpleRNG(1)
       val (list, _) = initRng.ints(7)(initRng)
       assert(list.size == 7)
-      assert(list.count(_ != list.head) == 6)
+      assert(!list.contains(0))
+    }
+
+    "call sequence should return Rand[List[A]]" in {
+      val rng = SimpleRNG(1)
+      assert(rng.sequence(List(rng.int, rng.int, rng.int))(rng)._1 == List(384748, -1151252339, -549383847))
     }
   }
 }

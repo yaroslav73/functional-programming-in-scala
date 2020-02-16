@@ -18,6 +18,8 @@ build/
 .scala_dependencies
 .cache
 .cache-main
+.bloop
+.metals
 
 #general
 *.cs

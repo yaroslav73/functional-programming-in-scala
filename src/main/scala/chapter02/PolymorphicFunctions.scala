@@ -38,4 +38,15 @@ object PolymorphicFunctions {
       loop(xs.head, xs.tail, result = true)
     }
   }
+
+  def isSortedAnswer[A](xs: Array[A], ordered: (A, A) => Boolean): Boolean = {
+    @tailrec
+    def loop(n: Int): Boolean = {
+      if (n >= xs.length - 1) true
+      else if (ordered(xs(n), xs(n + 1))) false
+      else loop(n + 1)
+    }
+
+    loop(0)
+  }
 }

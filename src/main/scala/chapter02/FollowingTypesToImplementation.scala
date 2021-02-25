@@ -7,6 +7,9 @@ object FollowingTypesToImplementation {
   // A => (B => C) is the same as A => B => C
   def curry[A, B, C](f: (A, B) => C): A => (B => C) = (a: A) => f(a, _)
 
+  // Answer:
+  def curryAnswer[A, B, C](f: (A, B) => C): A => B => C = a => b => f(a, b)
+
   def uncurry[A, B, C](f: A => B => C): (A, B) => C = (a: A, b: B) => f(a)(b)
 
   // We can omit type for function argument a

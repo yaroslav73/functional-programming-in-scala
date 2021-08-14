@@ -47,11 +47,12 @@ object Monoid {
     override def zero: List[A] = Nil
   }
 
-  def optionMonoid[A: Monoid]: Monoid[Option[A]] = new Monoid[Option[A]] {
-    val instance: Monoid[A] = implicitly[Monoid[A]]
-    override def op(a1: Option[A], a2: Option[A]): Option[A] = a1.flatMap(v1 => a1.map(v2 => instance.op(v1, v2)))
-    override def zero: Option[A] = None
-  }
+  // Uncomment code below:
+  //  def optionMonoid[A: Monoid]: Monoid[Option[A]] = new Monoid[Option[A]] {
+  //    val instance: Monoid[A] = implicitly[Monoid[A]]
+  //    override def op(a1: Option[A], a2: Option[A]): Option[A] = a1.flatMap(v1 => a1.map(v2 => instance.op(v1, v2)))
+  //    override def zero: Option[A] = None
+  //  }
 
   def endoMonoid[A]: Monoid[A => A] = new Monoid[A => A] {
     override def op(a1: A => A, a2: A => A): A => A = a1 andThen a2

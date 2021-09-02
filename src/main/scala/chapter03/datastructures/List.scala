@@ -17,10 +17,14 @@ sealed trait List[+A] {
     case Cons(head, tail) if p(head) => tail.dropWhile(p)
     case _ => this
   }
+
+  def append[B >: A](that: List[B]): List[B] = this match {
+    case Nil => that
+    case Cons(head, tail) => Cons(head, tail.append(that))
+  }
 }
 
 case object Nil extends List[Nothing]
-
 case class Cons[+A](head: A, override val tail: List[A]) extends List[A]
 
 object List {

@@ -66,5 +66,17 @@ class ListSpec extends AnyWordSpec with Matchers {
       list.dropWhile(_ > 3) shouldBe Nil
       list.dropWhile(_ => true) shouldBe Nil
     }
+
+    "return list that appended l1 to l2" in {
+      val nonEmptyOne = List(1, 2, 3)
+      val nonEmptyTwo = List(3, 4, 5)
+      val emptyOne: List[Int] = Nil
+      val emptyTwo: List[Int] = Nil
+
+      nonEmptyOne.append(nonEmptyTwo) shouldBe List(1, 2, 3, 3, 4, 5)
+      nonEmptyOne.append(emptyTwo) shouldBe nonEmptyOne
+      emptyOne.append(nonEmptyTwo) shouldBe nonEmptyTwo
+      emptyOne.append(emptyTwo) shouldBe Nil
+    }
   }
 }

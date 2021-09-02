@@ -49,10 +49,7 @@ sealed trait List[+A] {
 
   def length: Int = foldLeft(0)((init, _) => init + 1)
 
-  def reverse: List[A] = this match {
-    case Nil => Nil
-    case Cons(head, tail) => tail.reverse append Cons(head, Nil)
-  }
+  def reverse: List[A] = foldLeft(Nil: List[A])((init, elem) => Cons(elem, init))
 }
 
 case object Nil extends List[Nothing]

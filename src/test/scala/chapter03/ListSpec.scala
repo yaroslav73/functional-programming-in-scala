@@ -32,5 +32,27 @@ class ListSpec extends AnyWordSpec with Matchers {
 
       List.setHead(list, 7) shouldBe List(7)
     }
+
+    "remove first n element for non-empty list with .drop(n)" in {
+      val list = List(1, 2, 3, 4, 5)
+
+      list.drop(3) shouldBe List(4, 5)
+    }
+
+
+    "return same list for if n =< 0 with .drop call" in {
+      val list = List(1, 2, 3, 4, 5)
+
+      list.drop(0) shouldBe list
+      list.drop(-3) shouldBe list
+    }
+
+    "return empty list for any .drop call" in {
+      val list: List[Int] = Nil
+
+      list.drop(3) shouldBe Nil
+      list.drop(-3) shouldBe Nil
+      list.drop(0) shouldBe Nil
+    }
   }
 }

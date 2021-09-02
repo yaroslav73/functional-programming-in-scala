@@ -5,9 +5,16 @@ sealed trait List[+A] {
     case Nil => throw new UnsupportedOperationException("tail of empty list")
     case Cons(_, tail) => tail
   }
+
+  def drop(n: Int): List[A] = this match {
+    case Nil => Nil
+    case Cons(_, tail) if n > 0 => tail.drop(n - 1)
+    case _ => this
+  }
 }
 
 case object Nil extends List[Nothing]
+
 case class Cons[+A](head: A, override val tail: List[A]) extends List[A]
 
 object List {

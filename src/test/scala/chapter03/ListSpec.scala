@@ -110,5 +110,19 @@ class ListSpec extends AnyWordSpec with Matchers {
       List.productFoldRight(list) shouldBe 120.0
       List.productFoldRight(listWithZero) shouldBe 0.0
     }
+
+    "return same list when pass as init Nil and Cons as function foldRight" in {
+      val list = List(1, 2, 3)
+
+      list.foldRight(Nil: List[Int])(Cons(_, _)) shouldBe list
+    }
+
+    "return length of list" in {
+      val list = List(1, 2, 3, 4, 5)
+      val emptyList: List[Int] = Nil
+
+      list.length shouldBe 5
+      emptyList.length shouldBe 0
+    }
   }
 }

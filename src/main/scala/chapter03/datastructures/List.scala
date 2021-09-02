@@ -6,6 +6,7 @@ sealed trait List[+A] {
     case Cons(_, tail) => tail
   }
 }
+
 case object Nil extends List[Nothing]
 case class Cons[+A](head: A, override val tail: List[A]) extends List[A]
 
@@ -18,14 +19,12 @@ object List {
   def append[A](l1: List[A], l2: List[A]): List[A] = l2 match {
     case Nil => l1
     case Cons(h, t) => Cons(h, append(l1, t))
-//    case Cons(h, t) => append(Cons(h, l1), t)
   }
 
   def head[A](xs: List[A]): A = xs match {
     case Nil => throw new NoSuchElementException("head of empty list")
     case Cons(h, _) => h
   }
-
 
   def setHead[A](xs: List[A], x: A): List[A] = xs match {
     case Nil => Cons(x, Nil)
@@ -63,7 +62,7 @@ object List {
 
   def foldRight[A, B](xs: List[A], init: B)(f: (A, B) => B): B = xs match {
     case Nil => init
-//    case Cons(h, t) => foldRight(t, f(h, init))(f)
+    //    case Cons(h, t) => foldRight(t, f(h, init))(f)
     case Cons(h, t) => f(h, foldRight(t, init)(f))
   }
 
@@ -92,7 +91,7 @@ object List {
   }
 
   def flatMap[A, B](xs: List[A])(f: A => List[B]): List[B] = xs match {
-    case Nil => Nil:List[B]
+    case Nil => Nil: List[B]
     case Cons(h, t) => append(f(h), flatMap(t)(f))
   }
 
@@ -116,7 +115,7 @@ object List {
   def filterFlatMap[A](xs: List[A])(f: A => Boolean): List[A] =
     flatMap(xs)(h => if (f(h)) Cons(h, Nil) else Nil)
 
-  def reverseFold[A](xs: List[A]): List[A] = foldLeft(xs, Nil:List[A])((init: List[A], x: A) => Cons(x, init))
+  def reverseFold[A](xs: List[A]): List[A] = foldLeft(xs, Nil: List[A])((init: List[A], x: A) => Cons(x, init))
 
   def sum(ints: List[Int]): Int = ints match {
     case Nil => 0
@@ -131,7 +130,7 @@ object List {
   def addIntLists(l1: List[Int], l2: List[Int]): List[Int] = flatMap(l1)(a => map(l2)(b => a + b))
 
   def double2String(nums: List[Double]): List[String] = nums match {
-    case Nil => Nil:List[String]
+    case Nil => Nil: List[String]
     case Cons(h, t) => Cons(h.toString, double2String(t))
   }
 
@@ -139,7 +138,7 @@ object List {
 
   def product(nums: List[Double]): Double = nums match {
     case Nil => 1.0
-    case Cons(h @ 0.0, _) => h
+    case Cons(h@0.0, _) => h
     case Cons(h, t) => h * product(t)
   }
 

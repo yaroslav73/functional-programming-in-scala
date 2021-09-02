@@ -20,5 +20,17 @@ class ListSpec extends AnyWordSpec with Matchers {
         list.tail
       }
     }
+
+    "replace first element of non-empty list with setHead" in {
+      val list = List(1, 2, 3)
+
+      List.setHead(list, 7) shouldBe List(7, 2, 3)
+    }
+
+    "set first element for empty list with setHead" in {
+      val list: List[Int] = Nil
+
+      List.setHead(list, 7) shouldBe List(7)
+    }
   }
 }

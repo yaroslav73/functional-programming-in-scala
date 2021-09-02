@@ -1,8 +1,13 @@
 package chapter03.datastructures
 
-sealed trait List[+A]
+sealed trait List[+A] {
+  def tail: List[A] = this match {
+    case Nil => throw new UnsupportedOperationException("tail of empty list")
+    case Cons(_, tail) => tail
+  }
+}
 case object Nil extends List[Nothing]
-case class Cons[+A](head: A, tail: List[A]) extends List[A]
+case class Cons[+A](head: A, override val tail: List[A]) extends List[A]
 
 object List {
   def apply[A](elems: A*): List[A] = {

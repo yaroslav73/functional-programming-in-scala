@@ -1,9 +1,9 @@
 package chapter03
 
 import chapter03.datastructures.{Branch, Leaf, Tree}
-import org.scalatest.{Ignore, WordSpec}
+import org.scalatest.wordspec.AnyWordSpec
 
-class TreeSpec extends WordSpec {
+class TreeSpec extends AnyWordSpec {
   "A Tree" when {
     "have 2 Leafs" should {
       "have calculate size 2 with fold" in {

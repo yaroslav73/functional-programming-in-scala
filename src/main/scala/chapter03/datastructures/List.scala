@@ -36,10 +36,8 @@ sealed trait List[+A] {
     case Cons(head, tail) => Cons(head, tail.init)
   }
 
-  def foldRight[B](init: B)(f: (A, B) => B): B = this match {
-    case Nil => init
-    case Cons(head, tail) => f(head, tail.foldRight(init)(f))
-  }
+  def foldRight[B](init: B)(f: (A, B) => B): B =
+    foldLeft((b: B) => b)((init, elem) => b => init(f(elem, b)))(init)
 
   @tailrec
   final def foldLeft[B](init: B)(f: (B, A) => B): B = this match {

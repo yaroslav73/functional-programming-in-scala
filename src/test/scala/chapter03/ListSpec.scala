@@ -132,5 +132,11 @@ class ListSpec extends AnyWordSpec with Matchers {
       listInts.foldRight(0)(_ + _) shouldBe 15
       listStrings.foldRight("")(_ + _) shouldBe "hellodarknessmyoldfriend"
     }
+
+    "return reversed list" in {
+      val list = List(1, 2, 3)
+
+      list.reverse shouldBe List(3, 2, 1)
+    }
   }
 }

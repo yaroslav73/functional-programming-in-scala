@@ -47,7 +47,7 @@ sealed trait List[+A] {
     case Cons(head, tail) => tail.foldLeft(f(init, head))(f)
   }
 
-  def length: Int = foldRight(0)((_, init) => init + 1)
+  def length: Int = foldLeft(0)((init, _) => init + 1)
 }
 
 case object Nil extends List[Nothing]

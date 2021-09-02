@@ -1,5 +1,7 @@
 package chapter03.datastructures
 
+import scala.annotation.tailrec
+
 sealed trait List[+A] {
   def setHead[B >: A](x: B): List[B] = this match {
     case Nil => Cons(x, Nil)
@@ -37,6 +39,12 @@ sealed trait List[+A] {
   def foldRight[B](init: B)(f: (A, B) => B): B = this match {
     case Nil => init
     case Cons(head, tail) => f(head, tail.foldRight(init)(f))
+  }
+
+  @tailrec
+  final def foldLeft[B](init: B)(f: (B, A) => B): B = this match {
+    case Nil => init
+    case Cons(head, tail) => tail.foldLeft(f(init, head))(f)
   }
 
   def length: Int = foldRight(0)((_, init) => init + 1)
@@ -182,5 +190,7 @@ object List {
     if (elem == 0.0) 0.0 else elem * init
   }
 
-  def productFoldLeft(nums: List[Double]): Double = foldLeft(nums, 1.0)(_ * _)
+  def productFoldLeft(xs: List[Double]): Double = xs.foldLeft(1.0) { (init, elem) =>
+    if (elem == 0.0) 0.0 else elem * init
+  }
 }

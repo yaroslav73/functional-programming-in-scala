@@ -124,5 +124,13 @@ class ListSpec extends AnyWordSpec with Matchers {
       list.length shouldBe 5
       emptyList.length shouldBe 0
     }
+
+    "return sum and concatenate with foldLeft" in {
+      val listInts = List(1, 2, 3, 4, 5)
+      val listStrings = List("hello", "darkness", "my", "old", "friend")
+
+      listInts.foldRight(0)(_ + _) shouldBe 15
+      listStrings.foldRight("")(_ + _) shouldBe "hellodarknessmyoldfriend"
+    }
   }
 }

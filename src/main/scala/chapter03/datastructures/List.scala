@@ -11,6 +11,12 @@ sealed trait List[+A] {
     case Cons(_, tail) if n > 0 => tail.drop(n - 1)
     case _ => this
   }
+
+  def dropWhile(p: A => Boolean): List[A] = this match {
+    case Nil => Nil
+    case Cons(head, tail) if p(head) => tail.dropWhile(p)
+    case _ => this
+  }
 }
 
 case object Nil extends List[Nothing]

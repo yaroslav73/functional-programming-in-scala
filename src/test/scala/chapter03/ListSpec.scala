@@ -39,7 +39,6 @@ class ListSpec extends AnyWordSpec with Matchers {
       list.drop(3) shouldBe List(4, 5)
     }
 
-
     "return same list for if n =< 0 with .drop call" in {
       val list = List(1, 2, 3, 4, 5)
 
@@ -53,6 +52,19 @@ class ListSpec extends AnyWordSpec with Matchers {
       list.drop(3) shouldBe Nil
       list.drop(-3) shouldBe Nil
       list.drop(0) shouldBe Nil
+    }
+
+    "remove first n element for non-empty list while predicate return true with .dropWhile" in {
+      val list = List(1, 2, 3, 4, 5)
+
+      list.dropWhile(_ < 4) shouldBe List(4, 5)
+    }
+
+    "return empty list for any .dropWhile call" in {
+      val list: List[Int] = Nil
+
+      list.dropWhile(_ > 3) shouldBe Nil
+      list.dropWhile(_ => true) shouldBe Nil
     }
   }
 }

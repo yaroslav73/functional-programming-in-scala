@@ -176,7 +176,9 @@ object List {
     case Cons(h, t) => h * product(t)
   }
 
-  def productFold(nums: List[Double]): Double = foldRight(nums, 1.0)(_ * _)
+  def productFoldRight(xs: List[Double]): Double = xs.foldRight(1.0) { (elem, init) =>
+    if (elem == 0.0) 0.0 else elem * init
+  }
 
   def productFoldLeft(nums: List[Double]): Double = foldLeft(nums, 1.0)(_ * _)
 }

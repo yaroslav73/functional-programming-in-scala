@@ -102,5 +102,13 @@ class ListSpec extends AnyWordSpec with Matchers {
       listInts.foldRight(0)(_ + _) shouldBe 15
       listStrings.foldRight("")(_ + _) shouldBe "hellodarknessmyoldfriend"
     }
+
+    "return product for List[Double] when call productFoldRight" in {
+      val list: List[Double] = List(1, 2, 3, 4, 5)
+      val listWithZero: List[Double] = List(1, 2, 0, 4, 5)
+
+      List.productFoldRight(list) shouldBe 120.0
+      List.productFoldRight(listWithZero) shouldBe 0.0
+    }
   }
 }

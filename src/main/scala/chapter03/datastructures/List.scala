@@ -1,6 +1,11 @@
 package chapter03.datastructures
 
 sealed trait List[+A] {
+  def setHead[B >: A](x: B): List[B] = this match {
+    case Nil => Cons(x, Nil)
+    case Cons(_, tail) => Cons(x, tail)
+  }
+
   def tail: List[A] = this match {
     case Nil => throw new UnsupportedOperationException("tail of empty list")
     case Cons(_, tail) => tail
@@ -22,9 +27,21 @@ sealed trait List[+A] {
     case Nil => that
     case Cons(head, tail) => Cons(head, tail.append(that))
   }
+
+  def init: List[A] = this match {
+    case Nil => throw new UnsupportedOperationException("init of empty list")
+    case Cons(_, Nil) => Nil
+    case Cons(head, tail) => Cons(head, tail.init)
+  }
+
+  def foldRight[B](init: B)(f: (A, B) => B): B = this match {
+    case Nil => init
+    case Cons(head, tail) => f(head, tail.foldRight(init)(f))
+  }
 }
 
 case object Nil extends List[Nothing]
+
 case class Cons[+A](head: A, override val tail: List[A]) extends List[A]
 
 object List {

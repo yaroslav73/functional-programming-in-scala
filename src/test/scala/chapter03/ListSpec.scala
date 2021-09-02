@@ -24,13 +24,13 @@ class ListSpec extends AnyWordSpec with Matchers {
     "replace first element of non-empty list with setHead" in {
       val list = List(1, 2, 3)
 
-      List.setHead(list, 7) shouldBe List(7, 2, 3)
+      list.setHead(7) shouldBe List(7, 2, 3)
     }
 
     "set first element for empty list with setHead" in {
       val list: List[Int] = Nil
 
-      List.setHead(list, 7) shouldBe List(7)
+      list.setHead("Hello") shouldBe List("Hello")
     }
 
     "remove first n element for non-empty list with .drop(n)" in {
@@ -77,6 +77,30 @@ class ListSpec extends AnyWordSpec with Matchers {
       nonEmptyOne.append(emptyTwo) shouldBe nonEmptyOne
       emptyOne.append(nonEmptyTwo) shouldBe nonEmptyTwo
       emptyOne.append(emptyTwo) shouldBe Nil
+    }
+
+    "return list without last element when call .init for non-empty list" in {
+      val list = List(1, 2, 3, 4, 5)
+
+      list.init shouldBe List(1, 2, 3, 4)
+      list.init.init shouldBe List(1, 2, 3)
+    }
+
+    "throw UnsupportedOperationException when call .init for empty list" in {
+      val list: List[Int] = Nil
+
+      assertThrows[UnsupportedOperationException] {
+        list.tail
+        List(1).tail.tail
+      }
+    }
+
+    "return sum and concatenate with foldRight" in {
+      val listInts = List(1, 2, 3, 4, 5)
+      val listStrings = List("hello", "darkness", "my", "old", "friend")
+
+      listInts.foldRight(0)(_ + _) shouldBe 15
+      listStrings.foldRight("")(_ + _) shouldBe "hellodarknessmyoldfriend"
     }
   }
 }

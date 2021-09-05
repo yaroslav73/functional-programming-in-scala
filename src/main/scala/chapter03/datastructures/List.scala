@@ -63,6 +63,8 @@ sealed trait List[+A] {
     case (Nil, _) => Nil
     case (Cons(xh, xt), Cons(yh, yt)) => Cons(f(xh, yh), xt.zipWith(yt)(f))
   }
+
+  def hasSubsequence[B >: A](xs: List[B]): Boolean = ???
 }
 
 case object Nil extends List[Nothing]

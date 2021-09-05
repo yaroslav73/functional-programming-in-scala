@@ -197,5 +197,15 @@ class ListSpec extends AnyWordSpec with Matchers {
       listOne.zipWith(listTwo)(_ + _) shouldBe List(7, 9, 11, 13)
       listTwo.zipWith(listOne)(_ + _) shouldBe List(7, 9, 11, 13)
     }
+
+    "return true if list has passed subsequence" in {
+      val list = List(1, 2, 3, 4, 5)
+
+      list.hasSubsequence(List(1, 2)) shouldBe true
+      list.hasSubsequence(List(3, 2, 1)) shouldBe false
+      list.hasSubsequence(List(3, 4)) shouldBe true
+      list.hasSubsequence(List(5)) shouldBe true
+      list.hasSubsequence(Nil) shouldBe true
+    }
   }
 }

@@ -84,6 +84,11 @@ object List {
     loop(xs, Nil).reverse
   }
 
+  def concat[A](xs: List[List[A]]): List[A] = xs match {
+    case Nil => Nil
+    case Cons(head, tail) => head.append(concat(tail))
+  }
+
   def append[A](l1: List[A], l2: List[A]): List[A] = l2 match {
     case Nil => l1
     case Cons(h, t) => Cons(h, append(l1, t))

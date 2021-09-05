@@ -171,6 +171,12 @@ class ListSpec extends AnyWordSpec with Matchers {
       emptyList.filter(_ % 2 == 0) shouldBe Nil
     }
 
+    "return List[A] from List[List[A]]" in {
+      val list = List(List(1, 1), List(2, 2), List(3, 3), List(4, 4), List(5, 5))
+
+      List.concat(list) shouldBe List(1, 1, 2, 2, 3, 3, 4, 4, 5, 5)
+    }
+
     "return flatten list after applying map" in {
       val list = List(1, 2, 3, 4, 5)
 

@@ -189,5 +189,13 @@ class ListSpec extends AnyWordSpec with Matchers {
 
       List.addingElements(listOne, listTwo) shouldBe List(7, 9, 11, 13)
     }
+
+    "return new list with added corresponds elements using zipWith" in {
+      val listOne = List(1, 2, 3, 4, 5)
+      val listTwo = List(6, 7, 8, 9)
+
+      listOne.zipWith(listTwo)(_ + _) shouldBe List(7, 9, 11, 13)
+      listTwo.zipWith(listOne)(_ + _) shouldBe List(7, 9, 11, 13)
+    }
   }
 }

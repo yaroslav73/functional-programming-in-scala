@@ -57,6 +57,12 @@ sealed trait List[+A] {
 
   def flatMap[B](f: A => List[B]): List[B] =
     foldLeft(List.empty[B])((init, elem) => init.append(f(elem)))
+
+  def zipWith[B >: A](that: List[B])(f: (B, B) => B): List[B] = (this, that) match {
+    case (_, Nil) => Nil
+    case (Nil, _) => Nil
+    case (Cons(xh, xt), Cons(yh, yt)) => Cons(f(xh, yh), xt.zipWith(yt)(f))
+  }
 }
 
 case object Nil extends List[Nothing]

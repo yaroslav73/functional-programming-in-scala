@@ -25,10 +25,8 @@ sealed trait List[+A] {
     case _ => this
   }
 
-  def append[B >: A](that: List[B]): List[B] = this match {
-    case Nil => that
-    case Cons(head, tail) => Cons(head, tail.append(that))
-  }
+  def append[B >: A](that: List[B]): List[B] =
+    foldRight(that)((elem, init) => Cons(elem, init))
 
   def init: List[A] = this match {
     case Nil => throw new UnsupportedOperationException("init of empty list")

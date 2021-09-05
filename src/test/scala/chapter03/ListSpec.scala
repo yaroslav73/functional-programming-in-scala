@@ -141,14 +141,34 @@ class ListSpec extends AnyWordSpec with Matchers {
 
     "return new List[Int] with incremented each element by 1" in {
       val list = List(1, 2, 3)
+      val emptyList: List[Int] = Nil
 
       List.addOne(list) shouldBe List(2, 3, 4)
+      List.addOne(emptyList) shouldBe Nil
     }
 
     "return new List[String] from List[Double]" in {
       val list = List(1.0, 2.0, 3.0)
+      val emptyList: List[Double] = Nil
 
       List.double2String(list) shouldBe List("1.0", "2.0", "3.0")
+      List.double2String(emptyList) shouldBe Nil
+    }
+
+    "return new List[Int] with incremented each element by 1 with using map function" in {
+      val list = List(1, 2, 3)
+      val emptyList: List[Int] = Nil
+
+      list.map(_ + 1) shouldBe List(2, 3, 4)
+      emptyList.map(_ + 1) shouldBe Nil
+    }
+
+    "return filtered list with only even numbers" in {
+      val list = List(1, 2, 3, 4, 5)
+      val emptyList: List[Int] = Nil
+
+      list.filter(_ % 2 == 0) shouldBe List(1, 3, 5)
+      emptyList.filter(_ % 2 == 0) shouldBe Nil
     }
   }
 }

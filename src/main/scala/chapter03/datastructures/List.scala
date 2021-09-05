@@ -49,12 +49,23 @@ sealed trait List[+A] {
 }
 
 case object Nil extends List[Nothing]
+
 case class Cons[+A](head: A, override val tail: List[A]) extends List[A]
 
 object List {
   def apply[A](elems: A*): List[A] = {
     if (elems.isEmpty) Nil
     else Cons(elems.head, apply(elems.tail: _*))
+  }
+
+  def addOne(xs: List[Int]): List[Int] = {
+    @tailrec
+    def loop(xs: List[Int], acc: List[Int]): List[Int] = xs match {
+      case Nil => acc
+      case Cons(head, tail) => loop(tail, Cons(head + 1, acc))
+    }
+
+    loop(xs, Nil).reverse
   }
 
   def append[A](l1: List[A], l2: List[A]): List[A] = l2 match {
@@ -163,10 +174,10 @@ object List {
     case Cons(h, t) => h + sum(t)
   }
 
-  def addOne(ints: List[Int]): List[Int] = ints match {
-    case Nil => ints
-    case Cons(h, t) => Cons(h + 1, addOne(t))
-  }
+  //  def addOne(ints: List[Int]): List[Int] = ints match {
+  //    case Nil => ints
+  //    case Cons(h, t) => Cons(h + 1, addOne(t))
+  //  }
 
   def addIntLists(l1: List[Int], l2: List[Int]): List[Int] = flatMap(l1)(a => map(l2)(b => a + b))
 

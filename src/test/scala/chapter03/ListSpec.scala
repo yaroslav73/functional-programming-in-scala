@@ -138,5 +138,17 @@ class ListSpec extends AnyWordSpec with Matchers {
 
       list.reverse shouldBe List(3, 2, 1)
     }
+
+    "return new List[Int] with incremented each element by 1" in {
+      val list = List(1, 2, 3)
+
+      List.addOne(list) shouldBe List(2, 3, 4)
+    }
+
+    "return new List[String] from List[Double]" in {
+      val list = List(1.0, 2.0, 3.0)
+
+      List.double2String(list) shouldBe List("1.0", "2.0", "3.0")
+    }
   }
 }

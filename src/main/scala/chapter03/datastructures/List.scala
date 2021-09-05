@@ -69,6 +69,8 @@ case object Nil extends List[Nothing]
 case class Cons[+A](head: A, override val tail: List[A]) extends List[A]
 
 object List {
+  def empty[A]: List[A] = Nil
+
   def apply[A](elems: A*): List[A] = {
     if (elems.isEmpty) Nil
     else Cons(elems.head, apply(elems.tail: _*))
@@ -84,10 +86,8 @@ object List {
     loop(xs, Nil).reverse
   }
 
-  def concat[A](xs: List[List[A]]): List[A] = xs match {
-    case Nil => Nil
-    case Cons(head, tail) => head.append(concat(tail))
-  }
+  def concat[A](xs: List[List[A]]): List[A] =
+    xs.foldLeft(List.empty[A])((init, elem) => init.append(elem))
 
   def append[A](l1: List[A], l2: List[A]): List[A] = l2 match {
     case Nil => l1

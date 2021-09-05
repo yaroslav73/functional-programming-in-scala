@@ -81,6 +81,14 @@ object List {
     loop(xs, Nil).reverse
   }
 
+  def addingElements(xsx: List[Int], xsy: List[Int]): List[Int] = xsx match {
+    case Nil => Nil
+    case Cons(xHead, xTail) => xsy match {
+      case Nil => Nil
+      case Cons(yHead, yTail) => Cons(xHead + yHead, addingElements(xTail, yTail))
+    }
+  }
+
   def concat[A](xs: List[List[A]]): List[A] =
     xs.foldLeft(List.empty[A])((init, elem) => init.append(elem))
 

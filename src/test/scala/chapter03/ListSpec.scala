@@ -182,5 +182,12 @@ class ListSpec extends AnyWordSpec with Matchers {
 
       list.flatMap(i => List(i, i)) shouldBe List(1, 1, 2, 2, 3, 3, 4, 4, 5, 5)
     }
+
+    "return new list with added corresponds elements" in {
+      val listOne = List(1, 2, 3, 4, 5)
+      val listTwo = List(6, 7, 8, 9)
+
+      List.addingElements(listOne, listTwo) shouldBe List(7, 9, 11, 13)
+    }
   }
 }

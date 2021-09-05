@@ -167,8 +167,14 @@ class ListSpec extends AnyWordSpec with Matchers {
       val list = List(1, 2, 3, 4, 5)
       val emptyList: List[Int] = Nil
 
-      list.filter(_ % 2 == 0) shouldBe List(1, 3, 5)
+      list.filter(_ % 2 != 0) shouldBe List(1, 3, 5)
       emptyList.filter(_ % 2 == 0) shouldBe Nil
+    }
+
+    "return flatten list after applying map" in {
+      val list = List(1, 2, 3, 4, 5)
+
+      list.flatMap(i => List(i, i)) shouldBe List(1, 1, 2, 2, 3, 3, 4, 4, 5, 5)
     }
   }
 }

@@ -55,7 +55,12 @@ sealed trait List[+A] {
   def filter(p: A => Boolean): List[A] = this match {
     case Nil => Nil
     case Cons(head, tail) if p(head) => Cons(head, tail.filter(p))
-    case _ => this.filter(p)
+    case Cons(_, tail) => tail.filter(p)
+  }
+
+  def flatMap[B](f: A => List[B]): List[B] = this match {
+    case Nil => Nil
+    case Cons(head, tail) => f(head).append(tail.flatMap(f))
   }
 }
 

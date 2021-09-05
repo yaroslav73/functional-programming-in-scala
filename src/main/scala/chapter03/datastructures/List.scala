@@ -52,11 +52,8 @@ sealed trait List[+A] {
     case Cons(head, tail) => Cons(f(head), tail.map(f))
   }
 
-  def filter(p: A => Boolean): List[A] = this match {
-    case Nil => Nil
-    case Cons(head, tail) if p(head) => Cons(head, tail.filter(p))
-    case Cons(_, tail) => tail.filter(p)
-  }
+  def filter(p: A => Boolean): List[A] =
+    flatMap(e => if (p(e)) List(e) else Nil)
 
   def flatMap[B](f: A => List[B]): List[B] =
     foldLeft(List.empty[B])((init, elem) => init.append(f(elem)))

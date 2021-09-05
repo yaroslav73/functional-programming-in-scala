@@ -58,10 +58,8 @@ sealed trait List[+A] {
     case Cons(_, tail) => tail.filter(p)
   }
 
-  def flatMap[B](f: A => List[B]): List[B] = this match {
-    case Nil => Nil
-    case Cons(head, tail) => f(head).append(tail.flatMap(f))
-  }
+  def flatMap[B](f: A => List[B]): List[B] =
+    foldLeft(List.empty[B])((init, elem) => init.append(f(elem)))
 }
 
 case object Nil extends List[Nothing]

@@ -8,7 +8,7 @@ class TreeSpec extends AnyWordSpec {
     "have 2 Leafs" should {
       "should have size 2" in {
         val tree = Branch(Leaf(0), Leaf(1))
-        assert(Tree.fold(tree)(_ => 1)(_ + _) == 2)
+        assert(tree.fold(_ => 1)(_ + _) == 2)
       }
     }
 

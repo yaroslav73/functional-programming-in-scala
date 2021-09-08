@@ -9,6 +9,11 @@ sealed trait Tree[+A] {
     case Leaf(value) => Leaf(f(value))
     case Branch(left, right) => Branch(left.map(f), right.map(f))
   }
+
+  def fold[B](f: A => B)(ff: (B, B) => B): B = this match {
+    case Leaf(value) => f(value)
+    case Branch(left, right) => ff(left.fold(f)(ff), right.fold(f)(ff))
+  }
 }
 
 final case class Leaf[A](value: A) extends Tree[A] {

@@ -10,9 +10,9 @@ sealed trait Tree[+A] {
     case Branch(left, right) => Branch(left.map(f), right.map(f))
   }
 
-  def fold[B](f: A => B)(ff: (B, B) => B): B = this match {
-    case Leaf(value) => f(value)
-    case Branch(left, right) => ff(left.fold(f)(ff), right.fold(f)(ff))
+  def fold[B](l: A => B)(b: (B, B) => B): B = this match {
+    case Leaf(value) => l(value)
+    case Branch(left, right) => b(left.fold(l)(b), right.fold(l)(b))
   }
 }
 

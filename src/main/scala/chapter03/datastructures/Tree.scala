@@ -5,10 +5,7 @@ sealed trait Tree[+A] {
 
   def depth: Int
 
-  def map[B](f: A => B): Tree[B] = this match {
-    case Leaf(value) => Leaf(f(value))
-    case Branch(left, right) => Branch(left.map(f), right.map(f))
-  }
+  def map[B](f: A => B): Tree[B] = fold(a => Tree(f(a)))(Branch(_, _))
 
   def fold[B](l: A => B)(b: (B, B) => B): B = this match {
     case Leaf(value) => l(value)
@@ -30,5 +27,7 @@ final case class Branch[A](left: Tree[A], right: Tree[A]) extends Tree[A] {
 }
 
 object Tree {
+  def apply[A](a: A): Tree[A] = Leaf(a)
+
   def maximum(tree: Tree[Int]): Int = tree.fold(v => v)(_ max _)
 }

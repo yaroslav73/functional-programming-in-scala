@@ -120,7 +120,6 @@ object List {
     case Cons(_, t) => t
   }
 
-  // TODO: reverse List
   def init[A](xs: List[A]): List[A] = {
     def loop(xs: List[A], res: List[A]): List[A] = {
       xs match {
@@ -205,11 +204,6 @@ object List {
     case Nil => 0
     case Cons(h, t) => h + sum(t)
   }
-
-  //  def addOne(ints: List[Int]): List[Int] = ints match {
-  //    case Nil => ints
-  //    case Cons(h, t) => Cons(h + 1, addOne(t))
-  //  }
 
   def addIntLists(l1: List[Int], l2: List[Int]): List[Int] = flatMap(l1)(a => map(l2)(b => a + b))
 

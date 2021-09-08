@@ -148,14 +148,6 @@ object List {
     case Cons(h, t) if h == head(sup) => hasSubsequence(t, tail(sup))
     case Cons(_, t) => hasSubsequence(sup, t)
   }
-
-  def fib(n: Int): Int = {
-    def loop(n: Int, start: Int): Int = {
-
-    }
-
-    loop(n, 0)
-  }
 }
 
 val l1 = List(1, 2, 3, 4, 5, 6, 7)
@@ -175,11 +167,9 @@ val l2 = List(0.0, 1.0, 2.0, 3.0)
 //List.length(l1)
 //List.length(l2)
 //List.productLeftFOld(l2)
-//
 //List.sumLeftFold(l1)
 //List.reverse(l1)
 //List.reverseFold(l1)
-//
 //List.foldRight(l1, 0)((a: Int, b: Int) => { println(s"a: $a, b: $b"); a - b })
 //List.foldLeft(l1, 0)((a: Int, b: Int) => { println(s"a: $a, b: $b"); a - b })
 

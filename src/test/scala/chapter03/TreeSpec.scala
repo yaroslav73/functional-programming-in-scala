@@ -6,16 +6,16 @@ import org.scalatest.wordspec.AnyWordSpec
 class TreeSpec extends AnyWordSpec {
   "A Tree" when {
     "have 2 Leafs" should {
-      "have calculate size 2 with fold" in {
+      "should have size 2" in {
         val tree = Branch(Leaf(0), Leaf(1))
         assert(Tree.fold(tree)(_ => 1)(_ + _) == 2)
       }
     }
 
     "have 4 Leafs" should {
-      "have size 4" in {
+      "should have size 4" in {
         val tree = Branch(Branch(Leaf(1), Leaf(2)), Branch(Leaf(3), Leaf(4)))
-        assert(Tree.size(tree) == 4)
+        assert(tree.size == 4)
       }
     }
 

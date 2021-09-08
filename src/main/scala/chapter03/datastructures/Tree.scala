@@ -1,8 +1,14 @@
 package chapter03.datastructures
 
-sealed trait Tree[+A]
-case class Leaf[A](value: A) extends Tree[A]
-case class Branch[A](left: Tree[A], right: Tree[A]) extends Tree[A]
+sealed trait Tree[+A] {
+  def size: Int
+}
+case class Leaf[A](value: A) extends Tree[A] {
+  override def size: Int = 1
+}
+case class Branch[A](left: Tree[A], right: Tree[A]) extends Tree[A] {
+  override def size: Int = left.size + right.size
+}
 
 object Tree {
   def size[A](tree: Tree[A]): Int = fold(tree)(_ => 1)(_ + _)

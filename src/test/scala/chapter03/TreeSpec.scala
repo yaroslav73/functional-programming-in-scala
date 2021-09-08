@@ -73,7 +73,7 @@ class TreeSpec extends AnyWordSpec {
             Leaf(6)),
         )
 
-        assert(Tree.fold(tree)(_ => 1)((l, r) => 1 + (l max r)) == 3)
+        assert(tree.fold(_ => 1)((l, r) => 1 + (l max r)) == 3)
       }
     }
 

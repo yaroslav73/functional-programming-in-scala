@@ -19,15 +19,15 @@ class TreeSpec extends AnyWordSpec {
       }
     }
 
-    "contains (3, 1, 4, 2)" should {
-      "return maximus is 4" in {
+    "Tree of (3, 1, 4, 2)" should {
+      "maximum should be 4" in {
         val tree = Branch(Branch(Leaf(3), Leaf(1)), Branch(Leaf(4), Leaf(1)))
-        assert(Tree.size(tree) == 4)
+        assert(Tree.maximum(tree) == 4)
       }
     }
 
-    "have 5 Branches" should {
-      "have depth is 5" in {
+    "Tree has 5 Branches" should {
+      "depth should be 5" in {
         val tree = Branch(
           Leaf(1), Branch(
             Branch(
@@ -43,21 +43,21 @@ class TreeSpec extends AnyWordSpec {
           )
         )
 
-        assert(Tree.depth(tree) == 5)
+        assert(tree.depth == 5)
       }
     }
 
-    "have 1 Branch with 2 Leafs" should {
-      "have depth is 2" in {
+    "Tree has 2 Leafs" should {
+      "depth should be 2" in {
         val tree = Branch(Leaf(1), Leaf(3))
-        assert(Tree.depth(tree) == 2)
+        assert(tree.depth == 2)
       }
     }
 
-    "have 1 Leaf" should {
-      "have depth is 1" in {
+    "only Leaf" should {
+      "depth should be 1" in {
         val tree = Leaf('A')
-        assert(Tree.depth(tree) == 1)
+        assert(tree.depth == 1)
       }
     }
 

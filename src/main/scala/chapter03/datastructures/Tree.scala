@@ -2,20 +2,36 @@ package chapter03.datastructures
 
 sealed trait Tree[+A] {
   def size: Int
+
+  def depth: Int = this match {
+    case Leaf(_) => 1
+    case Branch(Leaf(_), Leaf(_)) => 2
+    case Branch(left, Leaf(_)) => left.depth
+    case Branch(Leaf(_), right) => right.depth
+    case Branch(left, right) => left.depth + right.depth + 1
+  }
 }
+
 case class Leaf[A](value: A) extends Tree[A] {
   override def size: Int = 1
 }
+
 case class Branch[A](left: Tree[A], right: Tree[A]) extends Tree[A] {
   override def size: Int = left.size + right.size
 }
 
 object Tree {
+  def maximum(tree: Tree[Int]): Int = tree match {
+    case Leaf(value) => value
+    case Branch(left, right) => maximum(left) max maximum(right)
+  }
+
+
   def size[A](tree: Tree[A]): Int = fold(tree)(_ => 1)(_ + _)
 
-  def maximum(tree: Tree[Int]): Int = fold(tree)(elem => elem)((l, r) => l max r)
+  //  def maximum(tree: Tree[Int]): Int = fold(tree)(elem => elem)((l, r) => l max r)
 
-  def depth[A](tree: Tree[A]): Int = fold(tree)(_ => 1)((l, r) => 1 + (l max r))
+  //  def depth[A](tree: Tree[A]): Int = fold(tree)(_ => 1)((l, r) => 1 + (l max r))
 
   def map[A, B](tree: Tree[A])(f: A => B): Tree[B] = fold(tree)(elem => Leaf(f(elem)): Tree[B])((l, r) => Branch(l, r))
 

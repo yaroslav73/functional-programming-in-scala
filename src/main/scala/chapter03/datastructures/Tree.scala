@@ -1,7 +1,7 @@
 package chapter03.datastructures
 
 sealed trait Tree[+A] {
-  def size: Int
+  def size: Int = fold(_ => 1)(_ + _)
 
   def depth: Int
 
@@ -17,14 +17,10 @@ sealed trait Tree[+A] {
 }
 
 final case class Leaf[A](value: A) extends Tree[A] {
-  override def size: Int = 1
-
   override def depth: Int = 1
 }
 
 final case class Branch[A](left: Tree[A], right: Tree[A]) extends Tree[A] {
-  override def size: Int = left.size + right.size
-
   override def depth: Int = this match {
     case Branch(Leaf(_), Leaf(_)) => 2
     case Branch(left, Leaf(_)) => left.depth

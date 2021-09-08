@@ -4,6 +4,11 @@ sealed trait Tree[+A] {
   def size: Int
 
   def depth: Int
+
+  def map[B](f: A => B): Tree[B] = this match {
+    case Leaf(value) => Leaf(f(value))
+    case Branch(left, right) => Branch(left.map(f), right.map(f))
+  }
 }
 
 final case class Leaf[A](value: A) extends Tree[A] {

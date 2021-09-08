@@ -99,7 +99,7 @@ class TreeSpec extends AnyWordSpec {
             Leaf(7)),
         )
 
-        assert(Tree.map(tree)(_ + 1) == expected)
+        assert(tree.map(_ + 1) == expected)
       }
     }
   }

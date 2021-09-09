@@ -8,10 +8,7 @@ sealed trait Option[+A] {
   }
 
   // Apply f, which may fail, to the Option if not None
-  def flatMap[B](f: A => Option[B]): Option[B] = this match {
-    case Some(value) => f(value)
-    case None => None
-  }
+  def flatMap[B](f: A => Option[B]): Option[B] = map(f).getOrElse(None)
 
   // The B >: A says that B type parameter must be a supertype of A
   def getOrElse[B >: A](default: => B): B = this match {
@@ -20,16 +17,10 @@ sealed trait Option[+A] {
   }
 
   // Don't evaluate ob unless needed
-  def orElse[B >: A](ob: Option[B]): Option[B] = this match {
-    case Some(_) => this
-    case None => ob
-  }
+  def orElse[B >: A](that: Option[B]): Option[B] = map(Some(_)).getOrElse(that)
 
   // Convert Some to None if the value doesn't satisfy f
-  def filter(f: A => Boolean): Option[A] = this match {
-    case Some(value) if f(value) => Some(value)
-    case _ => None
-  }
+  def filter(f: A => Boolean): Option[A] = flatMap(a => if (f(a)) Some(a) else None)
 
   def lift[A, B](f: A => B): Option[A] => Option[B] = _ map f
 }

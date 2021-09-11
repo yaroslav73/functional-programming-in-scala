@@ -9,22 +9,18 @@ sealed trait Either[+E, +A] {
 
   def flatMap[EE >: E, B](f: A => Either[EE, B]): Either[EE, B] =
     this match {
-      case Right(value) => f(value)
-      case Left(value)  => Left(value)
+      case left @ Left(_) => left
+      case Right(value)   => f(value)
     }
 
-  def orElse[EE >: E, B >: A](b: => Either[EE, B]): Either[EE, B] =
+  def orElse[EE >: E, B >: A](that: => Either[EE, B]): Either[EE, B] =
     this match {
-      case Right(_) => this
-      case Left(_)  => b
+      case Left(_)          => that
+      case right @ Right(_) => right
     }
 
-  def map2[EE >: E, B, C](b: Either[EE, B])(f: (A, B) => C): Either[EE, C] =
-    this flatMap { a1 =>
-      b map { b1 =>
-        f(a1, b1)
-      }
-    }
+  def map2[EE >: E, B, C](that: Either[EE, B])(f: (A, B) => C): Either[EE, C] =
+    flatMap(a => that.map(b => f(a, b)))
 }
 
 final case class Left[+E](value: E) extends Either[E, Nothing]

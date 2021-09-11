@@ -38,10 +38,7 @@ object Option {
     a.flatMap(a => b.map(b => f(a, b)))
 
   def sequence[A](xs: List[Option[A]]): Option[List[A]] =
-    xs match {
-      case Nil          => Some(Nil)
-      case head :: tail => head.flatMap(a => sequence(tail).map(list => a :: list))
-    }
+    traverse(xs)(a => a)
 
   def traverse[A, B](xs: List[A])(f: A => Option[B]): Option[List[B]] =
     xs.foldRight[Option[List[B]]](Some(Nil))((elem, init) => map2(f(elem), init)(_ :: _))

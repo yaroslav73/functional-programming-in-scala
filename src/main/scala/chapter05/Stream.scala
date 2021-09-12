@@ -44,10 +44,7 @@ sealed trait Stream[+A] {
     }
 
   def takeWhile(p: A => Boolean): Stream[A] =
-    this match {
-      case Cons(head, tail) if p(head()) => cons(head(), tail().takeWhile(p))
-      case _                             => empty
-    }
+    foldRight(empty[A])((elem, init) => if (p(elem)) cons(elem, init) else empty)
 
   def takeWhileUnfold(p: A => Boolean): Stream[A] =
     Stream.unfold(this) { s =>
@@ -76,9 +73,6 @@ sealed trait Stream[+A] {
     }
 
   def existFoldRight(p: A => Boolean): Boolean = foldRight(false)((a, b) => p(a) || b)
-
-  def takeWileFoldRight(p: A => Boolean): Stream[A] =
-    foldRight(Stream.empty[A])((h, t) => if (p(h)) Cons(() => h, () => t) else Stream.empty[A])
 
   def headOptionFoldRight: Option[A] = foldRight(None: Option[A])((a, _) => Some(a))
 

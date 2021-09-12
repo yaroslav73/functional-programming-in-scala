@@ -76,6 +76,41 @@ class StreamSpec extends AnyWordSpec with Matchers {
       emptyStream.map(_ * 3).toList shouldBe List.empty[Int]
     }
 
+    "filter should return filtered Stream with elements match with predicate" in {
+      val nonEmptyStream = Stream(1, 2, 3, 4, 5)
+      val emptyStream = Stream.empty[Int]
+
+      nonEmptyStream.filter(_ % 2 == 0).toList shouldBe List(2, 4)
+      nonEmptyStream.filter(_ % 2 != 0).toList shouldBe List(1, 3, 5)
+      emptyStream.filter(_ == 3) shouldBe Stream.empty[Int]
+    }
+
+    "append should return Stream with appended element" in {
+      val nonEmptyStream = Stream(1, 2, 3, 4, 5)
+      val emptyStream = Stream.empty[Int]
+
+      nonEmptyStream.append(6).toList shouldBe List(1, 2, 3, 4, 5, 6)
+      emptyStream.append(1).toList shouldBe List(1)
+    }
+
+    "append should return Stream with elements of appending Stream" in {
+      val nonEmptyStream = Stream(1, 2, 3, 4, 5)
+      val emptyStream = Stream.empty[Int]
+
+      nonEmptyStream.append(Stream(6, 7, 8)).toList shouldBe List(1, 2, 3, 4, 5, 6, 7, 8)
+      nonEmptyStream.append(emptyStream).toList shouldBe List(1, 2, 3, 4, 5)
+      emptyStream.append(Stream(1, 2, 3)).toList shouldBe List(1, 2, 3)
+      emptyStream.append(emptyStream) shouldBe Stream.empty[Int]
+    }
+
+    "flatMap should return transformed Stream with function f" in {
+      val nonEmptyStream = Stream(1, 2, 3, 4, 5)
+      val emptyStream = Stream.empty[Int]
+
+      nonEmptyStream.flatMap(n => Stream(n -> n * n)).toList shouldBe List(1 -> 1, 2 -> 4, 3 -> 9, 4 -> 16, 5 -> 25)
+      emptyStream.flatMap(n => Stream(n -> n * n)) shouldBe Stream.empty[Int]
+    }
+
     "call function fibs should be generates stream of Fibonacci numbers" in {
       val fibs = Stream.fibs().take(8)
       fibs.toList shouldBe List(0, 1, 1, 2, 3, 5, 8, 13)

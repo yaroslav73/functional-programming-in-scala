@@ -69,38 +69,20 @@ sealed trait Stream[+A] {
       case _          => z
     }
 
-  def existFoldRight(p: A => Boolean): Boolean = foldRight(false)((a, b) => p(a) || b)
-
   def map[B](f: A => B): Stream[B] =
     foldRight(empty[B])((elem, init) => cons(f(elem), init))
 
-  def filter(f: A => Boolean): Stream[A] =
-    this match {
-      case Empty                => Empty
-      case Cons(h, t) if f(h()) => Cons(h, () => t().filter(f))
-      case Cons(_, t)           => t().filter(f)
-    }
+  def filter(p: A => Boolean): Stream[A] =
+    foldRight(empty[A])((elem, init) => if (p(elem)) cons(elem, init) else init)
 
-  def filterFoldRight(f: A => Boolean): Stream[A] =
-    foldRight(Stream.empty[A]) { (h, t) =>
-      if (f(h)) Cons(() => h, () => t.filterFoldRight(f)) else t.filterFoldRight(f)
-    }
+  def append[B >: A](b: B): Stream[B] =
+    foldRight(Stream(b))((elem, init) => cons(elem, init))
 
   def append[B >: A](s: => Stream[B]): Stream[B] =
-    this match {
-      case Empty      => s
-      case Cons(h, t) => Cons(h, () => t().append(s))
-    }
-
-  def appendFoldRight[B >: A](s: => Stream[B]): Stream[B] = foldRight(s)((h, t) => Cons(() => h, () => t))
+    foldRight(s)((head, init) => cons(head, init))
 
   def flatMap[B](f: A => Stream[B]): Stream[B] =
-    this match {
-      case Empty      => Empty
-      case Cons(h, t) => f(h()).append(t().flatMap(f))
-    }
-
-  def flatMapFoldRight[B](f: A => Stream[B]): Stream[B] = foldRight(Stream.empty[B])((h, t) => f(h).append(t))
+    foldRight(empty[B])((head, init) => f(head).append(init))
 
   def zipWith[B, C](s: Stream[B])(f: (A, B) => C): Stream[C] =
     Stream.unfold(this, s) { streams =>

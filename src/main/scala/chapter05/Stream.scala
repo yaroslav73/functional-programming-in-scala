@@ -8,6 +8,9 @@ sealed trait Stream[+A] {
   def headOption: Option[A] =
     foldRight[Option[A]](None)((elem, _) => Some(elem))
 
+  def find(p: A => Boolean): Option[A] =
+    filter(p).headOption
+
   def toList: List[A] = {
     @tailrec
     def loop(stream: Stream[A], acc: List[A]): List[A] = {
@@ -43,12 +46,6 @@ sealed trait Stream[+A] {
   def takeWhile(p: A => Boolean): Stream[A] =
     foldRight(empty[A])((elem, init) => if (p(elem)) cons(elem, init) else empty)
 
-  def takeWhileUnfold(p: A => Boolean): Stream[A] =
-    Stream.unfold(this) { s =>
-      if (s.headOption.isDefined && p(s.headOption.get)) Some(s.headOption.get, s.drop(1))
-      else None
-    }
-
   @tailrec
   final def exist(p: A => Boolean): Boolean =
     this match {
@@ -69,11 +66,11 @@ sealed trait Stream[+A] {
       case _          => z
     }
 
-  def map[B](f: A => B): Stream[B] =
-    foldRight(empty[B])((elem, init) => cons(f(elem), init))
-
   def filter(p: A => Boolean): Stream[A] =
     foldRight(empty[A])((elem, init) => if (p(elem)) cons(elem, init) else init)
+
+  def map[B](f: A => B): Stream[B] =
+    foldRight(empty[B])((elem, init) => cons(f(elem), init))
 
   def append[B >: A](b: B): Stream[B] =
     foldRight(Stream(b))((elem, init) => cons(elem, init))
@@ -106,8 +103,6 @@ sealed trait Stream[+A] {
   def startWith[A](s: Stream[A]): Boolean = this hasSubsequence s
 
   def tails: Stream[Stream[A]] = Stream.unfold(this)(s => if (s.headOption.isDefined) Option(s, s.drop(1)) else None)
-
-  def hasSubsequenceViaTails[A](sub: Stream[A]): Boolean = tails exist (_ startWith sub)
 
   def scanRight[B](init: B)(f: (A, => B) => B): Stream[B] =
     this match {

@@ -111,6 +111,16 @@ class StreamSpec extends AnyWordSpec with Matchers {
       emptyStream.flatMap(n => Stream(n -> n * n)) shouldBe Stream.empty[Int]
     }
 
+    "find should return Some element or None otherwise" in {
+      val nonEmptyStream = Stream(1, 2, 3, 4, 5)
+      val emptyStream = Stream.empty[Int]
+
+      nonEmptyStream.find(_ == 3) shouldBe Some(3)
+      nonEmptyStream.find(_ % 2 == 0) shouldBe Some(2)
+      nonEmptyStream.find(_ > 7) shouldBe None
+      emptyStream.find(_ % 2 == 0) shouldBe None
+    }
+
     "call function fibs should be generates stream of Fibonacci numbers" in {
       val fibs = Stream.fibs().take(8)
       fibs.toList shouldBe List(0, 1, 1, 2, 3, 5, 8, 13)
@@ -143,11 +153,6 @@ class StreamSpec extends AnyWordSpec with Matchers {
       stream.takeUnfold(3).toList shouldBe List(1, 2, 3)
     }
 
-    "call function takeWhileUnfold(_ < 3) should be return stream of 2 items" in {
-      val stream = Stream(1, 2, 3, 4, 5, 6, 7)
-      stream.takeWhileUnfold(_ < 3).toList shouldBe List(1, 2)
-    }
-
     "call function zipWith with Stream('one', 'two', 'three') should be return ..." in {
       val s1 = Stream("one", "two", "three")
       val s2 = Stream(1, 2, 3)
@@ -161,7 +166,6 @@ class StreamSpec extends AnyWordSpec with Matchers {
     }
 
     "call function zipAll with Stream('one', 'one', 'one') should be return ..." in {
-//      val s1 = Stream.constant("one")
       val s1 = Stream("one", "two")
       val s2 = Stream.constant(1)
       s1.zipAll(s2).take(3).toList shouldBe List((Option("one"), Option(1)), (Option("two"), Option(1)), (None, Option(1)))

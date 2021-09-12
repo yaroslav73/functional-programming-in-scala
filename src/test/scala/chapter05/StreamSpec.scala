@@ -38,6 +38,26 @@ class StreamSpec extends AnyWordSpec with Matchers {
       emptyStream.takeWhile(_ < 0) shouldBe Stream.empty[Int]
     }
 
+    "exist should return true if element present in Stream and false otherwise" in {
+      val nonEmptyStream = Stream(1, 2, 3, 4, 5)
+      val emptyStream = Stream.empty[Int]
+
+      nonEmptyStream.exist(_ == 3) shouldBe true
+      nonEmptyStream.exist(_ > 3) shouldBe true
+      nonEmptyStream.exist(_ >= 10) shouldBe false
+      emptyStream.exist(_ == 3) shouldBe false
+    }
+
+    "forAll should return true if all elements match the given predicate" in {
+      val nonEmptyStream = Stream(1, 2, 3, 4, 5)
+      val emptyStream = Stream.empty[Int]
+
+      nonEmptyStream.forAll(_ == 3) shouldBe false
+      nonEmptyStream.forAll(_ < 6) shouldBe true
+      nonEmptyStream.forAll(_ < 5) shouldBe false
+      emptyStream.forAll(_ == 3) shouldBe true
+    }
+
     "call function fibs should be generates stream of Fibonacci numbers" in {
       val fibs = Stream.fibs().take(8)
       fibs.toList shouldBe List(0, 1, 1, 2, 3, 5, 8, 13)

@@ -55,10 +55,18 @@ sealed trait Stream[+A] {
       else None
     }
 
-  def exist(p: A => Boolean): Boolean =
+  @tailrec
+  final def exist(p: A => Boolean): Boolean =
     this match {
       case Cons(h, t) => p(h()) || t().exist(p)
       case _          => false
+    }
+
+  @tailrec
+  final def forAll(p: A => Boolean): Boolean =
+    this match {
+      case Cons(head, tail) => p(head()) && tail().forAll(p)
+      case _                => true
     }
 
   def foldRight[B](z: => B)(f: (A, => B) => B): B =
@@ -68,12 +76,6 @@ sealed trait Stream[+A] {
     }
 
   def existFoldRight(p: A => Boolean): Boolean = foldRight(false)((a, b) => p(a) || b)
-
-  def forAll(p: A => Boolean): Boolean =
-    this match {
-      case Cons(h, t) => p(h()) && t().forAll(p)
-      case _          => true
-    }
 
   def takeWileFoldRight(p: A => Boolean): Stream[A] =
     foldRight(Stream.empty[A])((h, t) => if (p(h)) Cons(() => h, () => t) else Stream.empty[A])

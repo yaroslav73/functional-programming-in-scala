@@ -3,14 +3,14 @@ package chapter05
 sealed trait Stream[+A] {
   def headOption: Option[A] =
     this match {
-      case Empty      => None
-      case Cons(h, _) => Some(h())
+      case Empty         => None
+      case Cons(head, _) => Some(head())
     }
 
   def toList: List[A] =
     this match {
-      case Empty      => List.empty[A]
-      case Cons(h, t) => List(h()) ++ t().toList
+      case Empty => Nil
+      case Cons(head, tail) => head() :: tail().toList
     }
 
   def take(count: Int): Stream[A] =
@@ -166,13 +166,8 @@ object Stream {
   /*
     A smart c-tor for creating a nonempty stream.
    */
-  def cons[A](h: => A, t: => Stream[A]): Stream[A] = {
-    // Cache the head and tail as lazy values
-    // to avoid repeated evaluation.
-    lazy val head = h
-    lazy val tail = t
+  def cons[A](head: A, tail: => Stream[A]): Stream[A] =
     Cons(() => head, () => tail)
-  }
 
   /*
     A smart c-tor for creating an empty stream
@@ -180,6 +175,10 @@ object Stream {
    */
   def empty[A]: Stream[A] = Empty
 
+  /*
+    A convenient variable-argument method for constructing
+    a Stream from multiple elements.
+   */
   def apply[A](as: A*): Stream[A] = if (as.isEmpty) empty else cons(as.head, apply(as.tail: _*))
 
   def append[A](s1: => Stream[A], s2: => Stream[A]): Stream[A] =

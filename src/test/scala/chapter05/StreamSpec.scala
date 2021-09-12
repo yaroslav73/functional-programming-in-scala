@@ -5,7 +5,15 @@ import org.scalatest.wordspec.AnyWordSpec
 
 class StreamSpec extends AnyWordSpec with Matchers {
 
-  "A Stream" when {
+  "A Stream" should {
+    "convert Stream to List with call .toList method" in {
+      val nonEmptyStream = Stream(1, 2, 3, 4, 5)
+      val emptyStream = Stream.empty[Int]
+
+      nonEmptyStream.toList shouldBe List(1, 2, 3, 4, 5)
+      emptyStream.toList shouldBe List.empty[Int]
+    }
+
     "call function fibs should be generates stream of Fibonacci numbers" in {
       val fibs = Stream.fibs().take(8)
       fibs.toList shouldBe List(0, 1, 1, 2, 3, 5, 8, 13)

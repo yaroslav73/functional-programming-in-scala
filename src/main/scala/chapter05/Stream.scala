@@ -45,9 +45,8 @@ sealed trait Stream[+A] {
 
   def takeWhile(p: A => Boolean): Stream[A] =
     this match {
-      case Empty                => Empty
-      case Cons(h, t) if p(h()) => Cons(h, () => t().takeWhile(p))
-      case Cons(_, _)           => Empty
+      case Cons(head, tail) if p(head()) => cons(head(), tail().takeWhile(p))
+      case _                             => empty
     }
 
   def takeWhileUnfold(p: A => Boolean): Stream[A] =

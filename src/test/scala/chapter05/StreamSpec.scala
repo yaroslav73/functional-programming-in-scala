@@ -30,6 +30,13 @@ class StreamSpec extends AnyWordSpec with Matchers {
       emptyStream.drop(3) shouldBe Stream.empty[Int]
     }
 
+    "takeWhile should return all starting elements of Stream that match the given predicate" in {
+      val nonEmptyStream = Stream(1, 2, 3, 4, 5)
+      val emptyStream = Stream.empty[Int]
+
+      nonEmptyStream.takeWhile(_ < 4).toList shouldBe List(1, 2, 3)
+      emptyStream.takeWhile(_ < 0) shouldBe Stream.empty[Int]
+    }
 
     "call function fibs should be generates stream of Fibonacci numbers" in {
       val fibs = Stream.fibs().take(8)

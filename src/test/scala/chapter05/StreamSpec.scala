@@ -6,6 +6,14 @@ import org.scalatest.wordspec.AnyWordSpec
 class StreamSpec extends AnyWordSpec with Matchers {
 
   "A Stream" should {
+    "headOption should return first element for non-empty Stream or None" in {
+      val nonEmptyStream = Stream(1, 2, 3, 4, 5)
+      val emptyStream = Stream.empty[Int]
+
+      nonEmptyStream.headOption shouldBe Some(1)
+      emptyStream.headOption shouldBe None
+    }
+
     "toList should convert Stream to List" in {
       val nonEmptyStream = Stream(1, 2, 3, 4, 5)
       val emptyStream = Stream.empty[Int]

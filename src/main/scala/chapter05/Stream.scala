@@ -6,10 +6,7 @@ import scala.annotation.tailrec
 
 sealed trait Stream[+A] {
   def headOption: Option[A] =
-    this match {
-      case Empty         => None
-      case Cons(head, _) => Some(head())
-    }
+    foldRight[Option[A]](None)((elem, _) => Some(elem))
 
   def toList: List[A] = {
     @tailrec
@@ -73,8 +70,6 @@ sealed trait Stream[+A] {
     }
 
   def existFoldRight(p: A => Boolean): Boolean = foldRight(false)((a, b) => p(a) || b)
-
-  def headOptionFoldRight: Option[A] = foldRight(None: Option[A])((a, _) => Some(a))
 
   def map[B](f: A => B): Stream[B] =
     this match {

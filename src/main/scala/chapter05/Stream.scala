@@ -1,5 +1,7 @@
 package chapter05
 
+import scala.annotation.tailrec
+
 sealed trait Stream[+A] {
   def headOption: Option[A] =
     this match {
@@ -7,11 +9,17 @@ sealed trait Stream[+A] {
       case Cons(head, _) => Some(head())
     }
 
-  def toList: List[A] =
-    this match {
-      case Empty => Nil
-      case Cons(head, tail) => head() :: tail().toList
+  def toList: List[A] = {
+    @tailrec
+    def loop(stream: Stream[A], acc: List[A]): List[A] = {
+      stream match {
+        case Empty            => acc
+        case Cons(head, tail) => loop(tail(), acc :+ head())
+      }
     }
+
+    loop(this, List.empty[A])
+  }
 
   def take(count: Int): Stream[A] =
     this match {

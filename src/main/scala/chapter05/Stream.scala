@@ -36,11 +36,11 @@ sealed trait Stream[+A] {
       else None
     }
 
-  def drop(count: Int): Stream[A] =
+  @tailrec
+  final def drop(n: Int): Stream[A] =
     this match {
-      case Empty                    => Empty
-      case Cons(_, t) if count <= 1 => t()
-      case Cons(_, t)               => t().drop(count - 1)
+      case Cons(_, tail) if n > 0 => tail().drop(n - 1)
+      case _                      => this
     }
 
   def takeWhile(p: A => Boolean): Stream[A] =

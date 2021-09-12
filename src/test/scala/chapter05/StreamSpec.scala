@@ -22,6 +22,15 @@ class StreamSpec extends AnyWordSpec with Matchers {
       emptyStream.take(3) shouldBe Stream.empty[Int]
     }
 
+    "drop(n) should drop first n elements of Stream" in {
+      val nonEmptyStream = Stream(1, 2, 3, 4, 5)
+      val emptyStream = Stream.empty[Int]
+
+      nonEmptyStream.drop(3).toList shouldBe List(4, 5)
+      emptyStream.drop(3) shouldBe Stream.empty[Int]
+    }
+
+
     "call function fibs should be generates stream of Fibonacci numbers" in {
       val fibs = Stream.fibs().take(8)
       fibs.toList shouldBe List(0, 1, 1, 2, 3, 5, 8, 13)

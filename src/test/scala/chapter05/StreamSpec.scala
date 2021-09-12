@@ -66,6 +66,16 @@ class StreamSpec extends AnyWordSpec with Matchers {
       emptyStream.forAll(_ == 3) shouldBe true
     }
 
+    "map should return transformed Stream with function f" in {
+      val nonEmptyStream = Stream(1, 2, 3, 4, 5)
+      val emptyStream = Stream.empty[Int]
+
+      nonEmptyStream.map(_ * 3).toList shouldBe List(3, 6, 9, 12, 15)
+      nonEmptyStream.map(_ * 3).map(_.toString).toList shouldBe List("3", "6", "9", "12", "15")
+      emptyStream.map(_ * 3) shouldBe Stream.empty[Int]
+      emptyStream.map(_ * 3).toList shouldBe List.empty[Int]
+    }
+
     "call function fibs should be generates stream of Fibonacci numbers" in {
       val fibs = Stream.fibs().take(8)
       fibs.toList shouldBe List(0, 1, 1, 2, 3, 5, 8, 13)
@@ -91,11 +101,6 @@ class StreamSpec extends AnyWordSpec with Matchers {
     "call function unfoldFibs should be generates stream of Fibonacci numbers" in {
       val fibs = Stream.unfoldFibs().take(8)
       fibs.toList shouldBe List(0, 1, 1, 2, 3, 5, 8, 13)
-    }
-
-    "call function mapUnfold should be apply map function to stream" in {
-      val stream = Stream(1, 2, 3, 4, 5)
-      stream.mapUnfold(n => n * n).toList shouldBe List(1, 4, 9, 16, 25)
     }
 
     "call function takeUnfold(3) should be return stream of 3 items" in {

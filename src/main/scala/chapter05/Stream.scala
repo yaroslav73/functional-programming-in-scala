@@ -72,18 +72,7 @@ sealed trait Stream[+A] {
   def existFoldRight(p: A => Boolean): Boolean = foldRight(false)((a, b) => p(a) || b)
 
   def map[B](f: A => B): Stream[B] =
-    this match {
-      case Empty      => Empty
-      case Cons(h, t) => Cons(() => f(h()), () => t().map(f))
-    }
-
-  def mapFoldRight[B](f: A => B): Stream[B] = foldRight(Stream.empty[B])((h, t) => Cons(() => f(h), () => t))
-
-  def mapUnfold[B](f: A => B): Stream[B] =
-    Stream.unfold(this) { s =>
-      if (s.headOption.isDefined) Some(f(s.headOption.get), s.drop(1))
-      else None
-    }
+    foldRight(empty[B])((elem, init) => cons(f(elem), init))
 
   def filter(f: A => Boolean): Stream[A] =
     this match {

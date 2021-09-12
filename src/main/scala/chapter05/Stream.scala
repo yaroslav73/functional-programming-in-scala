@@ -1,5 +1,7 @@
 package chapter05
 
+import chapter05.Stream.{cons, empty}
+
 import scala.annotation.tailrec
 
 sealed trait Stream[+A] {
@@ -21,11 +23,11 @@ sealed trait Stream[+A] {
     loop(this, List.empty[A])
   }
 
-  def take(count: Int): Stream[A] =
+  def take(n: Int): Stream[A] =
     this match {
-      case Empty                    => Empty
-      case Cons(h, t) if count > 1  => Cons(h, () => t().take(count - 1))
-      case Cons(h, _) if count == 1 => Cons(h, () => Empty)
+      case Empty                     => empty
+      case Cons(head, tail) if n > 1 => cons(head(), tail().take(n - 1))
+      case Cons(head, _) if n == 1   => cons(head(), empty)
     }
 
   def takeUnfold(count: Int): Stream[A] =

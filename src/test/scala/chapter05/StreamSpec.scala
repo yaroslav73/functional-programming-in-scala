@@ -6,12 +6,20 @@ import org.scalatest.wordspec.AnyWordSpec
 class StreamSpec extends AnyWordSpec with Matchers {
 
   "A Stream" should {
-    "convert Stream to List with call .toList method" in {
+    "toList should convert Stream to List" in {
       val nonEmptyStream = Stream(1, 2, 3, 4, 5)
       val emptyStream = Stream.empty[Int]
 
       nonEmptyStream.toList shouldBe List(1, 2, 3, 4, 5)
       emptyStream.toList shouldBe List.empty[Int]
+    }
+
+    "take(n) should return first n elements of Stream" in {
+      val nonEmptyStream = Stream(1, 2, 3, 4, 5)
+      val emptyStream = Stream.empty[Int]
+
+      nonEmptyStream.take(3).toList shouldBe List(1, 2, 3)
+      emptyStream.take(3) shouldBe Stream.empty[Int]
     }
 
     "call function fibs should be generates stream of Fibonacci numbers" in {

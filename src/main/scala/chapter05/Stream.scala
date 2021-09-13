@@ -153,9 +153,8 @@ object Stream {
       case Cons(h, t) => Cons(h, () => append(t(), s2))
     }
 
-  def constant[A](a: A): Stream[A] = {
+  def constant[A](a: A): Stream[A] =
     cons(a, constant(a))
-  }
 
   def from(n: Int): Stream[Int] = {
     cons(n, from(n + 1))

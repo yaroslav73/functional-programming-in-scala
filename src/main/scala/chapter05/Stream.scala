@@ -156,9 +156,8 @@ object Stream {
   def constant[A](a: A): Stream[A] =
     cons(a, constant(a))
 
-  def from(n: Int): Stream[Int] = {
+  def from(n: Int): Stream[Int] =
     cons(n, from(n + 1))
-  }
 
   def fibs(): Stream[Int] = {
     def loop(n1: Int, n2: Int): Stream[Int] = {

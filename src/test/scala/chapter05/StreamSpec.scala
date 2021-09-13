@@ -128,6 +128,12 @@ class StreamSpec extends AnyWordSpec with Matchers {
       infiniteStream.take(737).toList shouldBe List.fill(737)(1)
     }
 
+    "from should return infinite stream of values n, n+1, n+2 and so on" in {
+      val infiniteStream = Stream.from(37)
+
+      infiniteStream.take(3).toList shouldBe List(37, 38, 39)
+    }
+
     "call function fibs should be generates stream of Fibonacci numbers" in {
       val fibs = Stream.fibs().take(8)
       fibs.toList shouldBe List(0, 1, 1, 2, 3, 5, 8, 13)

@@ -154,29 +154,17 @@ object Stream {
     }
 
   def constant[A](a: A): Stream[A] =
-    cons(a, constant(a))
+    unfold(empty[A])(s => Some(a, s))
 
   def from(n: Int): Stream[Int] =
-    cons(n, from(n + 1))
+    unfold(n)(s => Some(s, s + 1))
 
-  def fibs(): Stream[Int] = {
-    def next(prev: Int, current: Int): Stream[Int] =
-      cons(prev, next(current, prev + current))
-
-    next(0, 1)
-  }
+  def fibs(): Stream[Int] =
+    unfold((0, 1)) { case (prev, current) => Some(prev, (current, current + prev)) }
 
   def unfold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] =
     f(z) match {
       case None         => empty
       case Some((a, s)) => cons(a, unfold(s)(f))
     }
-
-  def unfoldOnes(): Stream[Int] = unfold(1)((n: Int) => Option(n, 1))
-
-  def unfoldFrom(n: Int): Stream[Int] = unfold(n)((x: Int) => Option(x, x + 1))
-
-  def unfoldConstant[A](a: A): Stream[A] = unfold(a)((a: A) => Option(a, a))
-
-  def unfoldFibs(): Stream[Int] = unfold((0, 1))((n: (Int, Int)) => Option(n._1, (n._2 + n._1, n._1)))
 }

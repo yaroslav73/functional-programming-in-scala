@@ -144,23 +144,6 @@ class StreamSpec extends AnyWordSpec with Matchers {
       unfolded.take(5).toList shouldBe List(0, 1, 2, 3, 4)
     }
 
-    "call unfoldOnes and take first 3 elements should return List(1, 1, 1)" in {
-      Stream.unfoldOnes().take(3).toList shouldBe List(1, 1, 1)
-    }
-
-    "call unfoldFrom(5) and take first 3 elements should return List(5, 6, 7)" in {
-      Stream.unfoldFrom(5).take(3).toList shouldBe List(5, 6, 7)
-    }
-
-    "call unfoldConstant('Hello') and take first 3 elements should return List('Hello', 'Hello','Hello')" in {
-      Stream.unfoldConstant("Hello").take(3).toList shouldBe List("Hello", "Hello", "Hello")
-    }
-
-    "call function unfoldFibs should be generates stream of Fibonacci numbers" in {
-      val fibs = Stream.unfoldFibs().take(8)
-      fibs.toList shouldBe List(0, 1, 1, 2, 3, 5, 8, 13)
-    }
-
     "call function takeUnfold(3) should be return stream of 3 items" in {
       val stream = Stream(1, 2, 3, 4, 5, 6, 7)
       stream.takeUnfold(3).toList shouldBe List(1, 2, 3)

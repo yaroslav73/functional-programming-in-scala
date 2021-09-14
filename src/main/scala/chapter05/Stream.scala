@@ -166,11 +166,10 @@ object Stream {
     next(0, 1)
   }
 
-  // I don't understand what should doing unfold function
   def unfold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] =
     f(z) match {
-      case Some((elem, s)) => cons(elem, unfold(s)(f))
-      case None            => empty[A]
+      case None         => empty
+      case Some((a, s)) => cons(a, unfold(s)(f))
     }
 
   def unfoldOnes(): Stream[Int] = unfold(1)((n: Int) => Option(n, 1))

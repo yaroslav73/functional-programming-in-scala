@@ -160,11 +160,10 @@ object Stream {
     cons(n, from(n + 1))
 
   def fibs(): Stream[Int] = {
-    def loop(n1: Int, n2: Int): Stream[Int] = {
-      cons(n1, loop(n2 + n1, n1))
-    }
+    def next(prev: Int, current: Int): Stream[Int] =
+      cons(prev, next(current, prev + current))
 
-    loop(0, 1)
+    next(0, 1)
   }
 
   // I don't understand what should doing unfold function

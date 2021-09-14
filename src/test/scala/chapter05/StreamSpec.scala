@@ -134,7 +134,7 @@ class StreamSpec extends AnyWordSpec with Matchers {
       infiniteStream.take(3).toList shouldBe List(37, 38, 39)
     }
 
-    "call function fibs should be generates stream of Fibonacci numbers" in {
+    "fibs should be generates infinite Stream of Fibonacci numbers" in {
       val fibs = Stream.fibs().take(8)
       fibs.toList shouldBe List(0, 1, 1, 2, 3, 5, 8, 13)
     }

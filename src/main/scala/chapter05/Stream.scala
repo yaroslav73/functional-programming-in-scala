@@ -70,7 +70,10 @@ sealed trait Stream[+A] {
     foldRight(empty[A])((elem, init) => if (p(elem)) cons(elem, init) else init)
 
   def map[B](f: A => B): Stream[B] =
-    foldRight(empty[B])((elem, init) => cons(f(elem), init))
+    Stream.unfold(this) {
+      case Empty            => None
+      case Cons(head, tail) => Some(f(head()), tail())
+    }
 
   def append[B >: A](b: B): Stream[B] =
     foldRight(Stream(b))((elem, init) => cons(elem, init))

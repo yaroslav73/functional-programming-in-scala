@@ -95,14 +95,14 @@ sealed trait Stream[+A] {
       case _                            => None
     }
 
-  def hasSubsequence[A](sub: Stream[A]): Boolean =
-    sub match {
-      case Empty                                   => true
-      case Cons(h, t) if this.headOption.isDefined => h() == this.headOption.get && t().hasSubsequence(this.drop(1))
-      case _                                       => false
-    }
+  def hasSubsequence[A](sub: Stream[A]): Boolean = ???
 
-  def startWith[A](s: Stream[A]): Boolean = this hasSubsequence s
+  def startsWith[A](that: Stream[A]): Boolean =
+    (this, that) match {
+      case (Cons(h1, t1), Cons(h2, t2)) if h1() == h2() => t1() startsWith t2()
+      case (_, Cons(_, _))                              => false
+      case (_, _)                                       => true
+    }
 
   def tails: Stream[Stream[A]] = Stream.unfold(this)(s => if (s.headOption.isDefined) Option(s, s.drop(1)) else None)
 

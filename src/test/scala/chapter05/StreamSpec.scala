@@ -139,6 +139,13 @@ class StreamSpec extends AnyWordSpec with Matchers {
       fibs.toList shouldBe List(0, 1, 1, 2, 3, 5, 8, 13)
     }
 
+    "startWith should return true if Stream starts with prefix and false otherwise" in {
+      val s1 = Stream.constant("one")
+      val s2 = Stream("one", "one")
+
+      s1 startsWith s2
+    }
+
     "call unfold function" in {
       val unfolded = Stream.unfold(0)((n: Int) => Option(n, n + 1))
       unfolded.take(5).toList shouldBe List(0, 1, 2, 3, 4)
@@ -166,12 +173,6 @@ class StreamSpec extends AnyWordSpec with Matchers {
       val s1 = Stream.constant("one")
       val s2 = Stream("one", "one")
       s1.hasSubsequence(s2)
-    }
-
-    "check startWith function" in {
-      val s1 = Stream.constant("one")
-      val s2 = Stream("one", "one")
-      s1 startWith s2
     }
 
     "check tails function" in {

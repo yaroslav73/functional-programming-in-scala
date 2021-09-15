@@ -81,17 +81,13 @@ sealed trait Stream[+A] {
   def flatMap[B](f: A => Stream[B]): Stream[B] =
     foldRight(empty[B])((head, init) => f(head).append(init))
 
-  def zipWith[B, C](s: Stream[B])(f: (A, B) => C): Stream[C] =
-    Stream.unfold(this, s) { streams =>
-      if (streams._1.headOption.isDefined && streams._2.headOption.isDefined) {
-        Some(f(streams._1.headOption.get, streams._2.headOption.get), (streams._1.drop(1), streams._2.drop(1)))
-      } else None
+  def zipWith[B, C](that: Stream[B])(f: (A, B) => C): Stream[C] =
+    Stream.unfold(this, that) {
+      case (Cons(h1, t1), Cons(h2, t2)) => Some(f(h1(), h2()), (t1(), t2()))
+      case (_, _)                       => None
     }
 
-  def zipAll[B](s: Stream[B]): Stream[(Option[A], Option[B])] =
-    Stream.unfold(this, s) { streams =>
-      Some((streams._1.headOption, streams._2.headOption), (streams._1.drop(1), streams._2.drop(1)))
-    }
+  def zipAll[B](s: Stream[B]): Stream[(Option[A], Option[B])] = ???
 
   def hasSubsequence[A](sub: Stream[A]): Boolean =
     sub match {

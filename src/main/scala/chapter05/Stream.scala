@@ -110,20 +110,13 @@ sealed trait Stream[+A] {
       case (_, _)                                       => true
     }
 
-  def tails: Stream[Stream[A]] = Stream.unfold(this)(s => if (s.headOption.isDefined) Option(s, s.drop(1)) else None)
-
-  def scanRight[B](init: B)(f: (A, => B) => B): Stream[B] =
-    this match {
-      case Cons(_, t) => Cons(() => foldRight(init)(f), () => t().scanRight(init)(f))
-      case _          => Cons(() => init, () => Empty)
+  def tails: Stream[Stream[A]] =
+    Stream.unfold(this) {
+      case Empty            => None
+      case Cons(head, tail) => Some(cons(head(), tail()), tail())
     }
 
-  def scanRightAnswer[B](z: B)(f: (A, => B) => B): Stream[B] =
-    foldRight((z, Stream(z)))((a, p0) => {
-      lazy val p1 = p0
-      val b2 = f(a, p1._1)
-      (b2, Cons(() => b2, () => p1._2))
-    })._2
+  def scanRight[A](z: A)(f: (A, A) => A): Stream[A] = ???
 }
 
 case object Empty extends Stream[Nothing]

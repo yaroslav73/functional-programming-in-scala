@@ -38,7 +38,10 @@ sealed trait Stream[+A] {
     }
 
   def takeWhile(p: A => Boolean): Stream[A] =
-    foldRight(empty[A])((elem, init) => if (p(elem)) cons(elem, init) else empty)
+    Stream.unfold(this) {
+      case Empty            => None
+      case Cons(head, tail) => if (p(head())) Some(head(), tail()) else None
+    }
 
   @tailrec
   final def exist(p: A => Boolean): Boolean =

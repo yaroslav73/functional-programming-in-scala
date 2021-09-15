@@ -84,10 +84,16 @@ sealed trait Stream[+A] {
   def zipWith[B, C](that: Stream[B])(f: (A, B) => C): Stream[C] =
     Stream.unfold(this, that) {
       case (Cons(h1, t1), Cons(h2, t2)) => Some(f(h1(), h2()), (t1(), t2()))
-      case (_, _)                       => None
+      case _                            => None
     }
 
-  def zipAll[B](s: Stream[B]): Stream[(Option[A], Option[B])] = ???
+  def zipAll[B](that: Stream[B]): Stream[(Option[A], Option[B])] =
+    Stream.unfold(this, that) {
+      case (Cons(h1, t1), Cons(h2, t2)) => Some((Some(h1()), Some(h2())), (t1(), t2()))
+      case (Cons(h1, t1), _)            => Some((Some(h1()), None), (t1(), empty))
+      case (_, Cons(h2, t2))            => Some((None, Some(h2())), (empty, t2()))
+      case _                            => None
+    }
 
   def hasSubsequence[A](sub: Stream[A]): Boolean =
     sub match {

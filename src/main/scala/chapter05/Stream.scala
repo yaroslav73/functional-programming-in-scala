@@ -24,16 +24,10 @@ sealed trait Stream[+A] {
   }
 
   def take(n: Int): Stream[A] =
-    this match {
-      case Empty                     => empty
-      case Cons(head, tail) if n > 1 => cons(head(), tail().take(n - 1))
-      case Cons(head, _) if n == 1   => cons(head(), empty)
-    }
-
-  def takeUnfold(count: Int): Stream[A] =
-    Stream.unfold(this, count) { pair =>
-      if (pair._2 >= 1 && pair._1.headOption.isDefined) Some(pair._1.headOption.get, (pair._1.drop(1), pair._2 - 1))
-      else None
+    Stream.unfold(this, n) {
+      case (Empty, _)                     => None
+      case (Cons(head, _), 1)             => Some(head(), (empty, n))
+      case (Cons(head, tail), n) if n > 1 => Some(head(), (tail(), n - 1))
     }
 
   @tailrec

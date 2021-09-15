@@ -144,11 +144,6 @@ class StreamSpec extends AnyWordSpec with Matchers {
       unfolded.take(5).toList shouldBe List(0, 1, 2, 3, 4)
     }
 
-    "call function takeUnfold(3) should be return stream of 3 items" in {
-      val stream = Stream(1, 2, 3, 4, 5, 6, 7)
-      stream.takeUnfold(3).toList shouldBe List(1, 2, 3)
-    }
-
     "call function zipWith with Stream('one', 'two', 'three') should be return ..." in {
       val s1 = Stream("one", "two", "three")
       val s2 = Stream(1, 2, 3)

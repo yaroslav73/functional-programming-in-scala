@@ -96,12 +96,7 @@ sealed trait Stream[+A] {
     }
 
   def hasSubsequence[B >: A](sub: Stream[B]): Boolean =
-    (this, sub) match {
-      case (Empty, _)                                   => false
-      case (_, Empty)                                   => true
-      case (Cons(h1, t1), Cons(h2, t2)) if h1() == h2() => t1() hasSubsequence t2()
-      case (Cons(_, t1), _)                             => t1() hasSubsequence sub
-    }
+    tails.exist(s => s.startsWith(sub))
 
   def startsWith[B >: A](that: Stream[B]): Boolean =
     (this, that) match {
@@ -116,7 +111,11 @@ sealed trait Stream[+A] {
       case Cons(head, tail) => Some(cons(head(), tail()), tail())
     }
 
-  def scanRight[A](z: A)(f: (A, A) => A): Stream[A] = ???
+  def scanRight[B](z: B)(f: (A, => B) => B): Stream[B] =
+    this match {
+      case Empty            => cons(z, empty)
+      case Cons(head, tail) => cons(f(head(), tail().foldRight(z)(f)), tail().scanRight(z)(f))
+    }
 }
 
 case object Empty extends Stream[Nothing]

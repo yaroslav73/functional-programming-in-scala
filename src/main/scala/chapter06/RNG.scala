@@ -26,4 +26,22 @@ object RNG {
     val (n, nextRNG) = nonNegativeInt(rng)
     (n / (Int.MaxValue.toDouble + 1), nextRNG)
   }
+
+  def intDouble(rng: RNG): ((Int, Double), RNG) = {
+    val (i, nextRNG) = rng.nextInt
+    val (d, resultRNG) = double(nextRNG)
+    (i -> d, resultRNG)
+  }
+
+  def doubleInt(rng: RNG): ((Double, Int), RNG) = {
+    val ((i, d), nextRNG) = intDouble(rng)
+    (d -> i, nextRNG)
+  }
+
+  def double3(rng: RNG): ((Double, Double, Double), RNG) = {
+    val (d1, rng1) = double(rng)
+    val (d2, rng2) = double(rng1)
+    val (d3, nextRNG) = double(rng2)
+    ((d1, d2, d3), nextRNG)
+  }
 }

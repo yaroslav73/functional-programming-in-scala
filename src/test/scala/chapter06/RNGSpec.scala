@@ -46,8 +46,7 @@ class RNGSpec extends AnyWordSpec with Matchers {
       for (n <- 0 to 1000000) {
         val rng = RNG.SimpleRNG(n)
         val (number, _) = RNG.double(rng)
-        number should be >= 0.0
-        number should be < 1.0
+        number should (be < 1.0 and be >= 0.0)
       }
     }
 
@@ -57,32 +56,32 @@ class RNGSpec extends AnyWordSpec with Matchers {
       number should be >= 0.0
     }
 
-    "call intDouble should return pair of int that should non-negative and double between 0 and 1" in {
+    "intDouble should return pair of int and non-negative double between 0 and 1" in {
       for (n <- 1 to 1000000) {
-        val rng = SimpleRNG(n)
-        val ((intVal, doubleVal), _) = rng.intDouble(rng)
-        assert(intVal >= 0)
-        assert(doubleVal < 1)
-        assert(doubleVal >= 0)
+        val rng = RNG.SimpleRNG(n)
+        val ((intResult, doubleResult), _) = RNG.intDouble(rng)
+
+        intResult should be <= Int.MaxValue
+        doubleResult should (be < 1.0 and be >= 0.0)
       }
     }
 
     "doubleInt should return same values as intDouble with same seed" in {
-      val rng = SimpleRNG(77)
-      val ((dVal1, iVal1), _) = rng.doubleInt(rng)
-      val ((iVal2, dVal2), _) = rng.intDouble(rng)
+      val rng = RNG.SimpleRNG(77)
+      val ((doubleResult1, intResult1), _) = RNG.doubleInt(rng)
+      val ((intResult2, doubleResult2), _) = RNG.intDouble(rng)
 
-      assert(dVal1 == dVal2)
-      assert(iVal1 == iVal2)
+      doubleResult1 shouldBe doubleResult2
+      intResult1 shouldBe intResult2
     }
 
     "double3 should return 3 double value and new RNG" in {
-      val rng = SimpleRNG(123)
-      val ((d1, d2, d3), _) = rng.double3(rng)
+      val rng = RNG.SimpleRNG(123)
+      val ((d1, d2, d3), _) = RNG.double3(rng)
 
-      assert(d1 >= 0 && d1 < 1)
-      assert(d2 >= 0 && d2 < 1)
-      assert(d3 >= 0 && d3 < 1)
+      d1 should (be >= 0.0 and be < 1.0)
+      d2 should (be >= 0.0 and be < 1.0)
+      d3 should (be >= 0.0 and be < 1.0)
     }
 
     "call ints should return List of random integer" in {

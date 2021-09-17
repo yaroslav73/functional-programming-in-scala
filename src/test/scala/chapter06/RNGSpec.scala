@@ -1,48 +1,60 @@
 package chapter06
 
+import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
-class RNGSpec extends AnyWordSpec {
+class RNGSpec extends AnyWordSpec with Matchers {
   "A Simple RNG" when {
-    "call nextInt with the same seed should return same value" in {
-      val rng1 = SimpleRNG(42)
-      val rng2 = SimpleRNG(42)
+    "nextInt with the same seed should return same value" in {
+      val rng1 = RNG.SimpleRNG(42)
+      val rng2 = RNG.SimpleRNG(42)
 
-      val (n1, _) = rng1.nextInt
-      val (n2, _) = rng2.nextInt
+      val (n1, nextRNG1) = rng1.nextInt
+      val (n2, nextRNG2) = rng2.nextInt
 
-      assert(n1 == n2)
+      n1 shouldBe n2
+      nextRNG1 shouldBe nextRNG2
     }
 
-    "call nextInt with different seed return different values" in {
-      val rng1 = SimpleRNG(42)
-      val rng2 = SimpleRNG(24)
+    "nextInt with different seed return different values" in {
+      val rng1 = RNG.SimpleRNG(42)
+      val rng2 = RNG.SimpleRNG(24)
 
-      val (n1, newRng1) = rng1.nextInt
-      val (n2, newRng2) = rng2.nextInt
+      val (n1, nextRNG1) = rng1.nextInt
+      val (n2, nextRNG2) = rng2.nextInt
 
-      assert(n1 != n2)
-      assert(newRng1 != newRng2)
+      n1 should not be n2
+      nextRNG1 should not be nextRNG2
     }
 
-    "call nonNegativeInt should not return negative values" in {
-      for (n <- 1 to 1000000) {
-        val rng = SimpleRNG(n)
-        assert(rng.nonNegativeInt(rng)._1 >= 0)
-      }
-    }
-
-    "call nonNegativeInt should return positive value for Int.MinValue seed" in {
-      val rng = SimpleRNG(Int.MinValue)
-      assert(rng.nonNegativeInt(rng)._1 >= 0)
-    }
-
-    "call double method should return a double between 0 and 1, not including 1" in {
+    "nonNegativeInt should not return negative values" in {
+      // TODO it possible to replace with Int.MaxValue?
       for (n <- 0 to 1000000) {
-        val rng = SimpleRNG(n)
-        val doubleRNGValue = rng.double(rng)._1
-        assert(doubleRNGValue >= 0 && doubleRNGValue < 1)
+        val rng = RNG.SimpleRNG(n)
+        val (number, _) = RNG.nonNegativeInt(rng)
+        number should be >= 0
       }
+    }
+
+    "nonNegativeInt should return positive value for Int.MinValue seed" in {
+      val rng = RNG.SimpleRNG(Int.MinValue)
+      val (number, _) = RNG.nonNegativeInt(rng)
+      number should be >= 0
+    }
+
+    "double method should return a double between 0 and 1, not including 1" in {
+      for (n <- 0 to 1000000) {
+        val rng = RNG.SimpleRNG(n)
+        val (number, _) = RNG.double(rng)
+        number should be >= 0.0
+        number should be < 1.0
+      }
+    }
+
+    "double method should return a double between 0 and 1, not including 1 for Int.MinValue seed" in {
+      val rng = RNG.SimpleRNG(Int.MinValue)
+      val (number, _) = RNG.double(rng)
+      number should be >= 0.0
     }
 
     "call intDouble should return pair of int that should non-negative and double between 0 and 1" in {

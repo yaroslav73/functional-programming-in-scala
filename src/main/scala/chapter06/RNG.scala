@@ -18,7 +18,12 @@ object RNG {
     rng.nextInt match {
       case (n, nextRNG) if n == Int.MinValue => (Int.MaxValue, nextRNG)
       case (n, nextRNG) if n < 0             => (-n, nextRNG)
-      case res @ (n, _) if n > 0             => res
+      case res @ (n, _) if n >= 0            => res
     }
+  }
+
+  def double(rng: RNG): (Double, RNG) = {
+    val (n, nextRNG) = nonNegativeInt(rng)
+    (n / (Int.MaxValue.toDouble + 1), nextRNG)
   }
 }

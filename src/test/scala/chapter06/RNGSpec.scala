@@ -84,11 +84,12 @@ class RNGSpec extends AnyWordSpec with Matchers {
       d3 should (be >= 0.0 and be < 1.0)
     }
 
-    "call ints should return List of random integer" in {
-      val initRng = SimpleRNG(1)
-      val (list, _) = initRng.ints(7)(initRng)
-      assert(list.size == 7)
-      assert(!list.contains(0))
+    "ints should return List of random integer" in {
+      val rng = RNG.SimpleRNG(1)
+      val (list, _) = RNG.ints(7)(rng)
+
+      list should have size 7
+      list.distinct should have size list.size
     }
 
     "call sequence should return Rand[List[A]]" in {

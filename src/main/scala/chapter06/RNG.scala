@@ -1,5 +1,7 @@
 package chapter06
 
+import scala.annotation.tailrec
+
 trait RNG {
   def nextInt: (Int, RNG)
 }
@@ -43,5 +45,16 @@ object RNG {
     val (d2, rng2) = double(rng1)
     val (d3, nextRNG) = double(rng2)
     ((d1, d2, d3), nextRNG)
+  }
+
+  def ints(n: Int)(rng: RNG): (List[Int], RNG) = {
+    @tailrec
+    def loop(n: Int, rng: RNG, acc: List[Int]): (List[Int], RNG) = {
+      val (i, nextRNG) = rng.nextInt
+      if (n == 0) (acc, nextRNG)
+      else loop(n - 1, nextRNG, acc :+ i)
+    }
+
+    loop(n, rng, List.empty)
   }
 }

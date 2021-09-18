@@ -80,14 +80,6 @@ object RNG {
     ((d1, d2, d3), nextRNG)
   }
 
-  def ints(n: Int)(rng: RNG): (List[Int], RNG) = {
-    @tailrec
-    def loop(n: Int, rng: RNG, acc: List[Int]): (List[Int], RNG) = {
-      val (i, nextRNG) = rng.nextInt
-      if (n == 0) (acc, nextRNG)
-      else loop(n - 1, nextRNG, acc :+ i)
-    }
-
-    loop(n, rng, List.empty)
-  }
+  def ints(n: Int): Rand[List[Int]] =
+    sequence(List.fill(n)(_.nextInt))
 }

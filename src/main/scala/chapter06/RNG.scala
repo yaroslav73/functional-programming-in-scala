@@ -3,15 +3,7 @@ package chapter06
 import scala.annotation.tailrec
 
 trait RNG {
-  type Rand[+A] = RNG => (A, RNG)
-
-  val int: Rand[Int] =
-    rng => rng.nextInt
-
   def nextInt: (Int, RNG)
-
-  def unit[A](a: A): Rand[A] =
-    rng => (a, rng)
 }
 
 object RNG {
@@ -23,6 +15,20 @@ object RNG {
       (n, nextRNG)
     }
   }
+
+  type Rand[+A] = RNG => (A, RNG)
+
+  val int: Rand[Int] =
+    rng => rng.nextInt
+
+  def unit[A](a: A): Rand[A] =
+    rng => (a, rng)
+
+  def map[A, B](s: Rand[A])(f: A => B): Rand[B] =
+    rng => {
+      val (a, ns) = s(rng)
+      (f(a), ns)
+    }
 
   def nonNegativeInt(rng: RNG): (Int, RNG) = {
     rng.nextInt match {

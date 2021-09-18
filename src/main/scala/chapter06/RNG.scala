@@ -54,14 +54,20 @@ object RNG {
     loop(rs, List.empty[A], _)
   }
 
+  def flatMap[A, B](r: Rand[A])(f: A => Rand[B]): Rand[B] =
+    rng => {
+      val (a, nr) = r(rng)
+      f(a)(nr)
+    }
+
   def nonNegativeEven: Rand[Int] = map(nonNegativeInt)(i => i - i % 2)
 
-  def nonNegativeLessThan(n: Int): Rand[Int] = { rng =>
-    val (i, rng2) = nonNegativeInt(rng)
-    val mod = i % n
-    if (i + (n - 1) - mod >= 0) (mod, rng2)
-    else nonNegativeLessThan(n)(rng2)
-  }
+  def nonNegativeLessThan(n: Int): Rand[Int] =
+    flatMap(nonNegativeInt) { i =>
+      val mod = i % n
+      if (i + (n - 1) - mod >= 0) (mod, _)
+      else nonNegativeLessThan(n)
+    }
 
   def nonNegativeInt(rng: RNG): (Int, RNG) = {
     rng.nextInt match {

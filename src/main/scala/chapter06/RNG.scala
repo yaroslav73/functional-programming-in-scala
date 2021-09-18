@@ -40,6 +40,20 @@ object RNG {
   def both[A, B](ra: Rand[A], rb: Rand[B]): Rand[(A, B)] =
     map2(ra)(rb)((_, _))
 
+  def sequence[A](rs: List[Rand[A]]): Rand[List[A]] = {
+    @tailrec
+    def loop(rs: List[Rand[A]], acc: List[A], nextRNG: RNG): (List[A], RNG) = {
+      rs match {
+        case Nil => (acc, nextRNG)
+        case head :: tail =>
+          val (a, nr) = head(nextRNG)
+          loop(tail, acc :+ a, nr)
+      }
+    }
+
+    loop(rs, List.empty[A], _)
+  }
+
   def nonNegativeEven: Rand[Int] = map(nonNegativeInt)(i => i - i % 2)
 
   def nonNegativeInt(rng: RNG): (Int, RNG) = {

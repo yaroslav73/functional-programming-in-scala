@@ -93,8 +93,9 @@ class RNGSpec extends AnyWordSpec with Matchers {
     }
 
     "call sequence should return Rand[List[A]]" in {
-      val rng = SimpleRNG(1)
-      assert(rng.sequence(List(rng.unit(1), rng.unit(2), rng.unit(3)))(rng)._1 == List(1, 2, 3))
+      val rng = RNG.SimpleRNG(1)
+      val (list, _) = RNG.sequence(List(RNG.unit(1), RNG.unit(2), RNG.unit(3)))(rng)
+      list shouldBe List(1, 2, 3)
     }
 
     "call nonNegativeLessThan should return Rand[Int] with correct boundary" in {

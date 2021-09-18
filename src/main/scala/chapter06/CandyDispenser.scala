@@ -14,7 +14,7 @@ case object Coin extends Input
 case object Turn extends Input
 
 final case class Machine(locked: Boolean, candies: Int, coins: Int) {
-  def changeState(input: Input): State[Machine, (Int, Int)] = State { machine =>
+  def changeState(input: Input): StateOld[Machine, (Int, Int)] = StateOld { machine =>
     input match {
       case Coin => machine match {
         case Machine(_, 0, _) => ((machine.candies, machine.coins), machine)
@@ -29,16 +29,16 @@ final case class Machine(locked: Boolean, candies: Int, coins: Int) {
     }
   }
 
-  def simulateMachine(inputs: List[Input]): State[Machine, (Int, Int)] = {
-    def loop(inputs: List[Input], initialState: State[Machine, (Int, Int)], machine: Machine): State[Machine, (Int, Int)] = {
+  def simulateMachine(inputs: List[Input]): StateOld[Machine, (Int, Int)] = {
+    def loop(inputs: List[Input], initialState: StateOld[Machine, (Int, Int)], machine: Machine): StateOld[Machine, (Int, Int)] = {
       if (inputs.isEmpty) initialState
       else {
         val (state, m) = changeState(inputs.head).run(machine)
-        loop(inputs.tail, State { _ => (state, m) }, m)
+        loop(inputs.tail, StateOld { _ => (state, m) }, m)
       }
     }
 
-    loop(inputs, State { _ => ((this.candies, this.coins), this) }, this)
+    loop(inputs, StateOld { _ => ((this.candies, this.coins), this) }, this)
   }
 }
 

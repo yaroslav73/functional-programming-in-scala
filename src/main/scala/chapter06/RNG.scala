@@ -53,16 +53,11 @@ object RNG {
   def double: Rand[Double] =
     map(nonNegativeInt)(n => n / (Int.MaxValue.toDouble + 1))
 
-  def intDouble(rng: RNG): ((Int, Double), RNG) = {
-    val (i, nextRNG) = rng.nextInt
-    val (d, resultRNG) = double(nextRNG)
-    (i -> d, resultRNG)
-  }
+  def intDouble: Rand[(Int, Double)] =
+    both(int, double)
 
-  def doubleInt(rng: RNG): ((Double, Int), RNG) = {
-    val ((i, d), nextRNG) = intDouble(rng)
-    (d -> i, nextRNG)
-  }
+  def doubleInt: Rand[(Double, Int)] =
+    both(double, int)
 
   def double3(rng: RNG): ((Double, Double, Double), RNG) = {
     val (d1, rng1) = double(rng)

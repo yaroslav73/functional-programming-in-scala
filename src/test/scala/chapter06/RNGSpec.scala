@@ -66,15 +66,6 @@ class RNGSpec extends AnyWordSpec with Matchers {
       }
     }
 
-    "doubleInt should return same values as intDouble with same seed" in {
-      val rng = RNG.SimpleRNG(77)
-      val ((doubleResult1, intResult1), _) = RNG.doubleInt(rng)
-      val ((intResult2, doubleResult2), _) = RNG.intDouble(rng)
-
-      doubleResult1 shouldBe doubleResult2
-      intResult1 shouldBe intResult2
-    }
-
     "double3 should return 3 double value and new RNG" in {
       val rng = RNG.SimpleRNG(123)
       val ((d1, d2, d3), _) = RNG.double3(rng)

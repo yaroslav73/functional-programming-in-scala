@@ -53,6 +53,8 @@ object RNG {
       f(a)(nr)
     }
 
+  def rollDie: Rand[Int] = map(nonNegativeLessThan(6))(_ + 1)
+
   def nonNegativeEven: Rand[Int] = map(nonNegativeInt)(i => i - i % 2)
 
   def nonNegativeLessThan(n: Int): Rand[Int] =

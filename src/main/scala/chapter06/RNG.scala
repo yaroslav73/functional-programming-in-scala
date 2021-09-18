@@ -3,7 +3,15 @@ package chapter06
 import scala.annotation.tailrec
 
 trait RNG {
+  type Rand[+A] = RNG => (A, RNG)
+
+  val int: Rand[Int] =
+    rng => rng.nextInt
+
   def nextInt: (Int, RNG)
+
+  def unit[A](a: A): Rand[A] =
+    rng => (a, rng)
 }
 
 object RNG {

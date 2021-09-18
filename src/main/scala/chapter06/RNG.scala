@@ -30,6 +30,8 @@ object RNG {
       (f(a), ns)
     }
 
+  def nonNegativeEven: Rand[Int] = map(nonNegativeInt)(i => i - i % 2)
+
   def nonNegativeInt(rng: RNG): (Int, RNG) = {
     rng.nextInt match {
       case (n, nextRNG) if n == Int.MinValue => (Int.MaxValue, nextRNG)

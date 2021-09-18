@@ -92,6 +92,15 @@ class RNGSpec extends AnyWordSpec with Matchers {
       list.distinct should have size list.size
     }
 
+    "nonNegativeEven should return only positive even numbers" in {
+      for (n <- 0 to 1000000) {
+        val rng = RNG.SimpleRNG(n)
+        val (number, _) = RNG.nonNegativeEven(rng)
+        number should be >= 0
+        (number % 2) shouldBe 0
+      }
+    }
+
     "call sequence should return Rand[List[A]]" in {
       val rng = SimpleRNG(1)
       assert(rng.sequence(List(rng.unit(1), rng.unit(2), rng.unit(3)))(rng)._1 == List(1, 2, 3))

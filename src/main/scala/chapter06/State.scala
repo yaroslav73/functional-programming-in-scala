@@ -1,21 +1,15 @@
 package chapter06
 
+import chapter06.State.unit
+
 import scala.annotation.tailrec
 
 final case class State[S, +A](run: S => (A, S)) {
   def map[B](f: A => B): State[S, B] =
-    State { s =>
-      val (a, ns) = run(s)
-      (f(a), ns)
-    }
+    flatMap(a => unit(f(a)))
 
-  def map2[B, C](that: State[S, B])(f: (A, B) => C): State[S, C] = {
-    State { s =>
-      val (a, nsa) = run(s)
-      val (b, nsb) = that.run(nsa)
-      (f(a, b), nsb)
-    }
-  }
+  def map2[B, C](that: State[S, B])(f: (A, B) => C): State[S, C] =
+    flatMap(a => that.map(b => f(a, b)))
 
   def flatMap[B](f: A => State[S, B]): State[S, B] =
     State { s =>

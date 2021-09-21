@@ -13,24 +13,24 @@ sealed trait Input
 case object Coin extends Input
 case object Turn extends Input
 
-final case class Machine(locked: Boolean, candies: Int, coins: Int) {
-  def changeState(input: Input): StateOld[Machine, (Int, Int)] = StateOld { machine =>
+final case class MachineOld(locked: Boolean, candies: Int, coins: Int) {
+  def changeState(input: Input): StateOld[MachineOld, (Int, Int)] = StateOld { machine =>
     input match {
       case Coin => machine match {
-        case Machine(_, 0, _) => ((machine.candies, machine.coins), machine)
-        case Machine(false, _, _) => ((machine.candies, machine.coins), machine)
-        case Machine(true, _, coin) => ((machine.candies, coin + 1), Machine(locked = false, machine.candies, coin + 1))
+        case MachineOld(_, 0, _) => ((machine.candies, machine.coins), machine)
+        case MachineOld(false, _, _) => ((machine.candies, machine.coins), machine)
+        case MachineOld(true, _, coin) => ((machine.candies, coin + 1), MachineOld(locked = false, machine.candies, coin + 1))
       }
       case Turn => machine match {
-        case Machine(_, 0, _) => ((machine.candies, machine.coins), machine)
-        case Machine(true, _, _) => ((machine.candies, machine.coins), machine)
-        case Machine(false, candy, _) => ((candy - 1, machine.coins), Machine(locked = true, candy - 1, machine.coins))
+        case MachineOld(_, 0, _) => ((machine.candies, machine.coins), machine)
+        case MachineOld(true, _, _) => ((machine.candies, machine.coins), machine)
+        case MachineOld(false, candy, _) => ((candy - 1, machine.coins), MachineOld(locked = true, candy - 1, machine.coins))
       }
     }
   }
 
-  def simulateMachine(inputs: List[Input]): StateOld[Machine, (Int, Int)] = {
-    def loop(inputs: List[Input], initialState: StateOld[Machine, (Int, Int)], machine: Machine): StateOld[Machine, (Int, Int)] = {
+  def simulateMachine(inputs: List[Input]): StateOld[MachineOld, (Int, Int)] = {
+    def loop(inputs: List[Input], initialState: StateOld[MachineOld, (Int, Int)], machine: MachineOld): StateOld[MachineOld, (Int, Int)] = {
       if (inputs.isEmpty) initialState
       else {
         val (state, m) = changeState(inputs.head).run(machine)
@@ -43,7 +43,7 @@ final case class Machine(locked: Boolean, candies: Int, coins: Int) {
 }
 
 object Run extends App {
-  val machine = Machine(true, 5, 10)
+  val machine = MachineOld(true, 5, 10)
   //    println(machine.changeState(Coin).run(machine))
   //    println(machine.changeState(Coin).run(machine)._2.changeState(Turn).run(machine))
   //    println(machine.changeState(Coin).run(machine)._2.changeState(Turn).run(machine)._2.changeState(Coin).run(machine))

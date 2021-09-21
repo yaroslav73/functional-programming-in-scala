@@ -25,15 +25,15 @@ object State {
   def sequence[A, S](states: List[State[S, A]]): State[S, List[A]] =
     State { s =>
       @tailrec
-      def loop(states: List[State[S, A]], acc: List[A], ns: S): State[S, List[A]] = {
+      def loop(states: List[State[S, A]], acc: List[A], ns: S): (List[A], S) = {
         states match {
-          case Nil => State(s => (acc, s))
+          case Nil => (acc, ns)
           case head :: tail =>
             val (a, s) = head.run(ns)
             loop(tail, acc :+ a, s)
         }
       }
 
-      loop(states, List.empty[A], s).run(s)
+      loop(states, List.empty[A], s)
     }
 }

@@ -16,6 +16,16 @@ final case class State[S, +A](run: S => (A, S)) {
       val (a, ns) = run(s)
       f(a).run(ns)
     }
+
+  def get: State[S, S] = State(s => (s, s))
+
+  def set(s: S): State[S, Unit] = State(_ => ((), s))
+
+  def modify(f: S => S): State[S, Unit] =
+    for {
+      s <- get
+      _ <- set(f(s))
+    } yield ()
 }
 
 object State {

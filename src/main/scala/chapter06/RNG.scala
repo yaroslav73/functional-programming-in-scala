@@ -17,6 +17,7 @@ object RNG {
   }
 
   type Rand[+A] = RNG => (A, RNG)
+//  type Rand[+A] = State[RNG, A]
 
   val int: Rand[Int] =
     rng => rng.nextInt

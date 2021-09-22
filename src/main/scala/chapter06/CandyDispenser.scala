@@ -10,18 +10,18 @@ package chapter06
  */
 
 sealed trait Input
-case object Coin extends Input
-case object Turn extends Input
+case object CoinOld extends Input
+case object TurnOld extends Input
 
 final case class MachineOld(locked: Boolean, candies: Int, coins: Int) {
   def changeState(input: Input): StateOld[MachineOld, (Int, Int)] = StateOld { machine =>
     input match {
-      case Coin => machine match {
+      case CoinOld => machine match {
         case MachineOld(_, 0, _) => ((machine.candies, machine.coins), machine)
         case MachineOld(false, _, _) => ((machine.candies, machine.coins), machine)
         case MachineOld(true, _, coin) => ((machine.candies, coin + 1), MachineOld(locked = false, machine.candies, coin + 1))
       }
-      case Turn => machine match {
+      case TurnOld => machine match {
         case MachineOld(_, 0, _) => ((machine.candies, machine.coins), machine)
         case MachineOld(true, _, _) => ((machine.candies, machine.coins), machine)
         case MachineOld(false, candy, _) => ((candy - 1, machine.coins), MachineOld(locked = true, candy - 1, machine.coins))
@@ -47,7 +47,7 @@ object Run extends App {
   //    println(machine.changeState(Coin).run(machine))
   //    println(machine.changeState(Coin).run(machine)._2.changeState(Turn).run(machine))
   //    println(machine.changeState(Coin).run(machine)._2.changeState(Turn).run(machine)._2.changeState(Coin).run(machine))
-  val machineState = machine.simulateMachine(List(Coin, Turn, Coin, Turn, Coin, Turn, Coin, Turn))
+  val machineState = machine.simulateMachine(List(CoinOld, TurnOld, CoinOld, TurnOld, CoinOld, TurnOld, CoinOld, TurnOld))
   val updateMachine = machineState.run(machine)
   println(updateMachine)
 }

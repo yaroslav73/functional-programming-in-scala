@@ -5,7 +5,7 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
 class MachineSpec extends AnyWordSpec with Matchers {
-  "A Candy Dispenser" should {
+  "A Candy Dispenser Machine" should {
     "simulateMachine should process list of Inputs in right way #1" in {
       val inputs = List(Coin, Turn, Coin, Turn, Coin, Turn, Coin, Turn)
       val machine = Machine(locked = true, 10, 100)

@@ -1,5 +1,5 @@
 package chapter07
 
-class ExecutorService {
+abstract class ExecutorService {
   def submit[A](a: Callable[A]): Future[A]
 }

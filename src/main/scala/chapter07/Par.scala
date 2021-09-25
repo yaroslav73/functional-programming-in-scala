@@ -28,6 +28,9 @@ object Par {
   // Wraps it's unevaluated argument in a Par and marks it for concurrent evaluation.
   def lazyUnit[A](a: => A): Par[A] = fork(unit(a))
 
+  def asyncF[A, B](f: A => B): A => Par[B] =
+    a => lazyUnit(f(a))
+
   // Extracts a value from a Par by actually performing the computation.
   def run[A](es: ExecutorService)(par: Par[A]): Future[A] = par(es)
 

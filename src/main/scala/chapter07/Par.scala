@@ -1,4 +1,5 @@
 package chapter07
+import scala.annotation.tailrec
 import scala.concurrent.duration.TimeUnit
 
 trait Par[A] {}
@@ -39,8 +40,19 @@ object Par {
     sequence(psb)
   }
 
-  def sequence[A](ps: List[Par[A]]): Par[List[A]] = { es =>
-    UnitFuture(ps.map(pa => pa(es).get))
+  def sequence[A](ps: List[Par[A]]): Par[List[A]] = {
+    @tailrec
+    def loop(ps: List[Par[A]], acc: List[A]): List[A] = {
+      ps match {
+        case Nil => acc
+        case head :: tail =>
+          var tempList = acc
+          map(head)(a => tempList = tempList :+ a)
+          loop(tail, tempList)
+      }
+    }
+
+    lazyUnit(loop(ps, List.empty[A]))
   }
 
   // Extracts a value from a Par by actually performing the computation.

@@ -40,20 +40,8 @@ object Par {
     sequence(psb)
   }
 
-  def sequence[A](ps: List[Par[A]]): Par[List[A]] = {
-    @tailrec
-    def loop(ps: List[Par[A]], acc: List[A]): List[A] = {
-      ps match {
-        case Nil => acc
-        case head :: tail =>
-          var tempList = acc
-          map(head)(a => tempList = tempList :+ a)
-          loop(tail, tempList)
-      }
-    }
-
-    lazyUnit(loop(ps, List.empty[A]))
-  }
+  def sequence[A](ps: List[Par[A]]): Par[List[A]] =
+    ps.foldRight[Par[List[A]]](unit(List.empty[A]))((elem, init) => map2(elem, init)(_ :: _))
 
   // Extracts a value from a Par by actually performing the computation.
   def run[A](es: ExecutorService)(par: Par[A]): Future[A] = par(es)

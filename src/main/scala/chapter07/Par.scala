@@ -9,6 +9,9 @@ object Par {
   // Promotes a constant value to a parallel computation.
   def unit[A](a: A): Par[A] = (_: ExecutorService) => UnitFuture(a)
 
+  def map[A, B](pa: Par[A])(f: A => B): Par[B] =
+    map2(pa, unit(()))((a, _) => f(a))
+
   // Combines the result of two parallel computations with a binary function.
   def map2[A, B, C](pa: Par[A], pb: Par[B])(f: (A, B) => C): Par[C] =
     (es: ExecutorService) => {

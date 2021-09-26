@@ -39,8 +39,8 @@ object Par {
     sequence(psb)
   }
 
-  def sequence[A](ps: List[Par[A]]): Par[List[A]] = {
-    ???
+  def sequence[A](ps: List[Par[A]]): Par[List[A]] = { es =>
+    UnitFuture(ps.map(pa => pa(es).get))
   }
 
   // Extracts a value from a Par by actually performing the computation.

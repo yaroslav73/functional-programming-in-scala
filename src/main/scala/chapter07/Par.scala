@@ -43,6 +43,11 @@ object Par {
   def sequence[A](ps: List[Par[A]]): Par[List[A]] =
     ps.foldRight[Par[List[A]]](unit(List.empty[A]))((elem, init) => map2(elem, init)(_ :: _))
 
+  def parFilter[A](as: List[A])(f: A => Boolean): Par[List[A]] = {
+    val pars = as.map(asyncF(a => if (f(a)) List(a) else List.empty))
+    map(sequence(pars))(_.flatten)
+  }
+
   // Extracts a value from a Par by actually performing the computation.
   def run[A](es: ExecutorService)(par: Par[A]): Future[A] = par(es)
 

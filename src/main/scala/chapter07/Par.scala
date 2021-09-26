@@ -34,6 +34,15 @@ object Par {
   def asyncF[A, B](f: A => B): A => Par[B] =
     a => lazyUnit(f(a))
 
+  def parMap[A, B](ps: List[A])(f: A => B): Par[List[B]] = {
+    val psb = ps.map(a => asyncF(f)(a))
+    sequence(psb)
+  }
+
+  def sequence[A](ps: List[Par[A]]): Par[List[A]] = {
+    ???
+  }
+
   // Extracts a value from a Par by actually performing the computation.
   def run[A](es: ExecutorService)(par: Par[A]): Future[A] = par(es)
 

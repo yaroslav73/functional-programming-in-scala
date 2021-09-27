@@ -27,6 +27,13 @@ object Par {
       f(a, b, c)
     }
 
+  def map4[A, B, C, D, E](pa: Par[A], pb: Par[B], pc: Par[C], pd: Par[D])(f: (A, B, C, D) => E): Par[E] =
+    map2(map2(pa, pb)((a, b) => (a, b)), map2(pc, pd)((c, d) => (c, d))) { (p1, p2) =>
+      val (a, b) = p1
+      val (c, d) = p2
+      f(a, b, c, d)
+    }
+
   // marks a computation for concurrent evaluation.
   // The evaluation wont actually occur until forced by run.
   def fork[A](a: => Par[A]): Par[A] =

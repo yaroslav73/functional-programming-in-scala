@@ -21,6 +21,12 @@ object Par {
       UnitFuture(f(af.get, bf.get))
     }
 
+  def map3[A, B, C, D](pa: Par[A], pb: Par[B], pc: Par[C])(f: (A, B, C) => D): Par[D] =
+    map2(pa, map2(pb, pc)((b, c) => (b, c))) { (a, pair) =>
+      val (b, c) = pair
+      f(a, b, c)
+    }
+
   // marks a computation for concurrent evaluation.
   // The evaluation wont actually occur until forced by run.
   def fork[A](a: => Par[A]): Par[A] =

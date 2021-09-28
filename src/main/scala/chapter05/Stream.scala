@@ -25,9 +25,9 @@ sealed trait Stream[+A] {
 
   def take(n: Int): Stream[A] =
     Stream.unfold(this, n) {
-      case (Empty, _)                     => None
       case (Cons(head, _), 1)             => Some(head(), (empty, n))
       case (Cons(head, tail), n) if n > 1 => Some(head(), (tail(), n - 1))
+      case (_, _)                         => None
     }
 
   @tailrec

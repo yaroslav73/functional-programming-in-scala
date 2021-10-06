@@ -11,4 +11,10 @@ object Gen {
   // State[RNG, Int] == RNG => (Int, RNG)
   def choose(start: Int, stopExclusive: Int): Gen[Int] =
     Gen(State(RNG.nonNegativeInt).map { n => start + n % (stopExclusive - start) })
+
+  def unit[A](a: => A): Gen[A] = Gen(State.unit(a))
+
+  def boolean: Gen[Boolean] = Gen(State(RNG.boolean))
+
+  def listOfN[A](n: Int, gen: Gen[A]): Gen[List[A]] = Gen(State.sequence(List.fill(n)(gen.sample)))
 }

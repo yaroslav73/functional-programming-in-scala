@@ -65,6 +65,13 @@ object RNG {
       else nonNegativeLessThan(n)
     }
 
+  def boolean: Rand[Boolean] =
+    rng =>
+      rng.nextInt match {
+        case (n, r) if (n % 2) == 0 => (true, r)
+        case (_, r)                 => (false, r)
+      }
+
   def nonNegativeInt(rng: RNG): (Int, RNG) = {
     rng.nextInt match {
       case (n, nextRNG) if n == Int.MinValue => (Int.MaxValue, nextRNG)

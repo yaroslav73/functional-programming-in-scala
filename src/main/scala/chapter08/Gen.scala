@@ -2,7 +2,9 @@ package chapter08
 
 import chapter06.{RNG, State}
 
-final case class Gen[A](sample: State[RNG, A])
+final case class Gen[A](sample: State[RNG, A]) {
+  def flatMap[B](f: A => Gen[B]): Gen[B] = Gen(sample.flatMap(a => f(a).sample))
+}
 
 object Gen {
   // type Rand[+A] = RNG => (A, RNG)

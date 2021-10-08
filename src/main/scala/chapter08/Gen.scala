@@ -4,6 +4,8 @@ import chapter06.{RNG, State}
 
 final case class Gen[A](sample: State[RNG, A]) {
   def flatMap[B](f: A => Gen[B]): Gen[B] = Gen(sample.flatMap(a => f(a).sample))
+
+  def optA: Gen[Option[A]] = Gen(this.sample.map(a => Option(a)))
 }
 
 object Gen {
@@ -19,4 +21,7 @@ object Gen {
   def boolean: Gen[Boolean] = Gen(State(RNG.boolean))
 
   def listOfN[A](n: Int, gen: Gen[A]): Gen[List[A]] = Gen(State.sequence(List.fill(n)(gen.sample)))
+
+  def pairInt(star: Int, stopExclusive: Int): Gen[(Int, Int)] =
+    Gen(choose(star, stopExclusive).sample.flatMap(i => choose(star, stopExclusive).sample.map(y => (i, y))))
 }

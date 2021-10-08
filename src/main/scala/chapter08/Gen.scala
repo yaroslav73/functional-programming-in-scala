@@ -11,6 +11,9 @@ final case class Gen[A](sample: State[RNG, A]) {
   def listOfN(n: Gen[Int]): Gen[List[A]] =
     n.flatMap(i => this.listOfN(i))
 
+  def union(g1: Gen[A], g2: Gen[A]): Gen[A] =
+    Gen.boolean.flatMap(b => if (b) g1 else g2)
+
   def optA: Gen[Option[A]] = Gen(this.sample.map(a => Option(a)))
 }
 

@@ -48,13 +48,21 @@ class GenSpec extends AnyWordSpecLike with Matchers {
     "generator list of size n with A values" in {
       val rng = RNG.SimpleRNG(5)
 
-      val gen = Gen.listOfN(5, Gen.boolean)
+      val gen = Gen.boolean.listOfN(5)
       val (list, _) = gen.sample.run(rng)
-
-      println(list)
 
       list should have size 5
       list shouldBe List(true, true, true, true, false)
+    }
+
+    "generator list of size n with A values with dynamic listOfN" in {
+      val rng = RNG.SimpleRNG(5)
+
+      val gen = Gen.boolean.listOfN(Gen.unit(7))
+      val (list, _) = gen.sample.run(rng)
+
+      list should have size 7
+      list shouldBe List(true, true, true, true, false, true, false)
     }
 
     "wrap generate value to Option with optA" in {

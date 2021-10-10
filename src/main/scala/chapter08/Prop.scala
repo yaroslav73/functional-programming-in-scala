@@ -4,8 +4,29 @@ import chapter06.RNG
 import chapter08.Prop.{Result, TestCases}
 
 case class Prop(run: (TestCases, RNG) => Result) {
-  def check(): Result = ???
-  def &&(p: Prop): Prop = ???
+  def &&(p: Prop): Prop =
+    Prop { (n, rng) =>
+      run(n, rng) match {
+        case Prop.Passed => p.run(n, rng)
+        case failure     => failure
+      }
+    }
+
+  def ||(p: Prop): Prop =
+    Prop { (n, rng) =>
+      run(n, rng) match {
+        case Prop.Falsified(failure, _) => p.tag(failure).run(n, rng)
+        case passed                     => passed
+      }
+    }
+
+  private def tag(msg: String): Prop =
+    Prop { (n, rng) =>
+      run(n, rng) match {
+        case Prop.Falsified(failure, successes) => Prop.Falsified(msg + "\n" + failure, successes)
+        case passed                             => passed
+      }
+    }
 }
 
 object Prop {

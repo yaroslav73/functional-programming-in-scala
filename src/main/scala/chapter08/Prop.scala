@@ -1,28 +1,28 @@
 package chapter08
 
 import chapter06.RNG
-import chapter08.Prop.{Result, TestCases}
+import chapter08.Prop.{MaxSize, Result, TestCases}
 
-case class Prop(run: (TestCases, RNG) => Result) {
+case class Prop(run: (MaxSize, TestCases, RNG) => Result) {
   def &&(p: Prop): Prop =
-    Prop { (n, rng) =>
-      run(n, rng) match {
-        case Prop.Passed => p.run(n, rng)
+    Prop { (max, n, rng) =>
+      run(max, n, rng) match {
+        case Prop.Passed => p.run(max, n, rng)
         case failure     => failure
       }
     }
 
   def ||(p: Prop): Prop =
-    Prop { (n, rng) =>
-      run(n, rng) match {
-        case Prop.Falsified(failure, _) => p.tag(failure).run(n, rng)
+    Prop { (max, n, rng) =>
+      run(max, n, rng) match {
+        case Prop.Falsified(failure, _) => p.tag(failure).run(max, n, rng)
         case passed                     => passed
       }
     }
 
   private def tag(msg: String): Prop =
-    Prop { (n, rng) =>
-      run(n, rng) match {
+    Prop { (max, n, rng) =>
+      run(max, n, rng) match {
         case Prop.Falsified(failure, successes) => Prop.Falsified(msg + "\n" + failure, successes)
         case passed                             => passed
       }
@@ -30,6 +30,7 @@ case class Prop(run: (TestCases, RNG) => Result) {
 }
 
 object Prop {
+  type MaxSize = Int
   type TestCases = Int
   type FailedCase = String
   type SuccessCount = Int
@@ -45,7 +46,7 @@ object Prop {
   }
 
   def forAll[A](gen: Gen[A])(f: A => Boolean): Prop =
-    Prop { (n, rng) =>
+    Prop { (_, n, rng) =>
       randomStream(gen)(rng)
         .zip(LazyList.from(0))
         .take(n)
@@ -59,6 +60,25 @@ object Prop {
         }
         .find(_.isFalsified)
         .getOrElse(Passed)
+    }
+
+  def forAll[A](g: SGen[A])(f: A => Boolean): Prop =
+    forAll(g(_))(f)
+
+  def forAll[A](g: Int => Gen[A])(f: A => Boolean): Prop =
+    Prop { (max, n, rng) =>
+      val casesPerSize: Int = (n + (max - 1)) / max
+      val props: LazyList[Prop] = LazyList.from(0).take((n min max) + 1).map(i => forAll(g(i))(f))
+      val prop: Prop = props
+        .map(p =>
+          Prop { (max, _, rng) =>
+            p.run(max, casesPerSize, rng)
+          }
+        )
+        .toList
+        .reduce(_ && _)
+
+      prop.run(max, n, rng)
     }
 
   def randomStream[A](g: Gen[A])(rng: RNG): LazyList[A] =

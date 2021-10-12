@@ -45,6 +45,13 @@ object Prop {
     override def isFalsified: Boolean = false
   }
 
+  def run(p: Prop, maxSize: MaxSize = 100, testCases: TestCases = 100, rng: RNG = RNG.SimpleRNG(System.currentTimeMillis())): Unit = {
+    p.run(maxSize, testCases, rng) match {
+      case Passed                        => println(s"+ OK, passed $testCases tests.")
+      case Falsified(failure, successes) => println(s"!!! Falsified after $successes passed tests:\n$failure")
+    }
+  }
+
   def forAll[A](gen: Gen[A])(f: A => Boolean): Prop =
     Prop { (_, n, rng) =>
       randomStream(gen)(rng)

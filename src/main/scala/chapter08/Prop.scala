@@ -4,6 +4,11 @@ import chapter06.RNG
 import chapter08.Prop.{MaxSize, Result, TestCases}
 
 case class Prop(run: (MaxSize, TestCases, RNG) => Result) {
+  def check(p: => Boolean): Prop = {
+    lazy val result = p
+    Prop.forAll(Gen.unit(()))(_ => result)
+  }
+
   def &&(p: Prop): Prop =
     Prop { (max, n, rng) =>
       run(max, n, rng) match {

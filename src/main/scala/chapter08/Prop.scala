@@ -4,10 +4,10 @@ import chapter06.RNG
 import chapter08.Prop.{MaxSize, Result, TestCases}
 
 case class Prop(run: (MaxSize, TestCases, RNG) => Result) {
-  def check(p: => Boolean): Prop = {
-    lazy val result = p
-    Prop.forAll(Gen.unit(()))(_ => result)
-  }
+  def check(p: => Boolean): Prop =
+    Prop { (_, _, _) =>
+      if (p) Prop.Passed else Prop.Falsified("()", 0)
+    }
 
   def &&(p: Prop): Prop =
     Prop { (max, n, rng) =>
@@ -43,15 +43,19 @@ object Prop {
   sealed trait Result {
     def isFalsified: Boolean
   }
+  case object Proved extends Result {
+    override def isFalsified: Boolean = false
+  }
   case object Passed extends Result {
-    override def isFalsified: Boolean = true
+    override def isFalsified: Boolean = false
   }
   case class Falsified(failure: FailedCase, successes: SuccessCount) extends Result {
-    override def isFalsified: Boolean = false
+    override def isFalsified: Boolean = true
   }
 
   def run(p: Prop, maxSize: MaxSize = 100, testCases: TestCases = 100, rng: RNG = RNG.SimpleRNG(System.currentTimeMillis())): Unit = {
     p.run(maxSize, testCases, rng) match {
+      case Proved                        => println(s"+ OK, proved property.")
       case Passed                        => println(s"+ OK, passed $testCases tests.")
       case Falsified(failure, successes) => println(s"!!! Falsified after $successes passed tests:\n$failure")
     }

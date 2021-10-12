@@ -35,6 +35,8 @@ object Gen {
 
   def boolean: Gen[Boolean] = Gen(State(RNG.boolean))
 
+  def listOfOne[A](gen: Gen[A]): SGen[List[A]] = SGen(n => gen.listOfN(n max 1))
+
   def listOfN[A](n: Int, gen: Gen[A]): Gen[List[A]] = Gen(State.sequence(List.fill(n)(gen.sample)))
 
   def listOf[A](g: Gen[A]): SGen[List[A]] = SGen(n => g.listOfN(n))

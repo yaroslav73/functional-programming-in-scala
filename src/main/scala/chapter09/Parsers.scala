@@ -15,7 +15,7 @@ trait Parsers[ParseError, Parser[+_]] { self =>
 
   def many[A](p: Parser[A]): Parser[List[A]]
 
-  def manyOne[A](p: Parser[A]): Parser[List[A]]
+  def manyOne[A](p: Parser[A]): Parser[List[A]] = map2(p, many(p))(_ :: _)
 
   def product[A, B](p1: Parser[A], p2: Parser[B]): Parser[(A, B)]
 

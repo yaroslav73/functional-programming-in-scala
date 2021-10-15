@@ -13,9 +13,13 @@ trait Parsers[ParseError, Parser[+_]] { self =>
 
   def or[A](p1: Parser[A], p2: Parser[A]): Parser[A]
 
-  def many[A](p: Parser[A]): Parser[List[A]]
+  def many[A](p: Parser[A]): Parser[List[A]] = map2(p, many(p))(_ :: _) or succeed(List.empty[A])
 
   def manyOne[A](p: Parser[A]): Parser[List[A]] = map2(p, many(p))(_ :: _)
+
+  def listOfN[A](n: Int, p: Parser[A]): Parser[List[A]] =
+    if (n <= 0) succeed(List.empty[A])
+    else map2(p, listOfN(n - 1, p))(_ :: _)
 
   def product[A, B](p1: Parser[A], p2: Parser[B]): Parser[(A, B)]
 

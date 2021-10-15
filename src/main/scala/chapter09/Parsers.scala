@@ -11,7 +11,7 @@ trait Parsers[ParseError, Parser[+_]] { self =>
 
   def succeed[A](a: A): Parser[A] = string("") map (_ => a)
 
-  def or[A](p1: Parser[A], p2: Parser[A]): Parser[A]
+  def or[A](p1: Parser[A], p2: => Parser[A]): Parser[A]
 
   def many[A](p: Parser[A]): Parser[List[A]] = map2(p, many(p))(_ :: _) or succeed(List.empty[A])
 
@@ -21,13 +21,13 @@ trait Parsers[ParseError, Parser[+_]] { self =>
     if (n <= 0) succeed(List.empty[A])
     else map2(p, listOfN(n - 1, p))(_ :: _)
 
-  def product[A, B](p1: Parser[A], p2: Parser[B]): Parser[(A, B)]
+  def product[A, B](p1: Parser[A], p2: => Parser[B]): Parser[(A, B)]
 
   def slice[A](p: Parser[A]): Parser[String]
 
   def map[A, B](p: Parser[A])(f: A => B): Parser[B]
 
-  def map2[A, B, C](p1: Parser[A], p2: Parser[B])(f: (A, B) => C): Parser[C] = product(p1, p2).map(f.tupled)
+  def map2[A, B, C](p1: Parser[A], p2: => Parser[B])(f: (A, B) => C): Parser[C] = product(p1, p2).map(f.tupled)
 
   implicit def string(s: String): Parser[String]
   implicit def operators[A](p: Parser[A]): ParserOps[A] = ParserOps[A](p)

@@ -23,7 +23,7 @@ trait Parsers[ParseError, Parser[+_]] { self =>
 
   def map[A, B](p: Parser[A])(f: A => B): Parser[B]
 
-  def map2[A, B, C](p1: Parser[A], p2: Parser[B])(f: (A, B) => C): Parser[C]
+  def map2[A, B, C](p1: Parser[A], p2: Parser[B])(f: (A, B) => C): Parser[C] = product(p1, p2).map(f.tupled)
 
   implicit def string(s: String): Parser[String]
   implicit def operators[A](p: Parser[A]): ParserOps[A] = ParserOps[A](p)

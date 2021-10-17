@@ -5,7 +5,7 @@ import chapter08.{Gen, Prop}
 import scala.language.implicitConversions
 import scala.util.matching.Regex
 
-trait Parsers[ParseError, Parser[+_]] { self =>
+trait Parsers[Parser[+_]] { self =>
   def run[A](p: Parser[A])(input: String): Either[ParseError, A]
 
   def char(c: Char): Parser[Char] = string(c.toString) map (_.charAt(0))
@@ -25,6 +25,12 @@ trait Parsers[ParseError, Parser[+_]] { self =>
   def product[A, B](p1: Parser[A], p2: => Parser[B]): Parser[(A, B)] = p1.flatMap(a => p2.map(b => (a, b)))
 
   def slice[A](p: Parser[A]): Parser[String]
+
+  def label[A](msg: String)(p: Parser[A]): Parser[A]
+
+  def scope[A](msg: String)(p: Parser[A]): Parser[A]
+
+  def attempt[A](p: Parser[A]): Parser[A]
 
   def map[A, B](p: Parser[A])(f: A => B): Parser[B] = flatMap(p)(a => succeed(f(a)))
 

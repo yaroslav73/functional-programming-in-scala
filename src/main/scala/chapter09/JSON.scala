@@ -9,7 +9,7 @@ object JSON {
   case class JsArray(value: IndexedSeq[JSON]) extends JSON
   case class JsObject(value: Map[String, JSON]) extends JSON
 
-  def jsonParser[ParseError, Parser[+_]](P: Parsers[ParseError, Parser]): Parser[JSON] = {
+  def jsonParser[Parser[+_]](P: Parsers[Parser]): Parser[JSON] = {
     import P.{string => _, _}
     ???
   }

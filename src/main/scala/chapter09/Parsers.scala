@@ -10,7 +10,9 @@ trait Parsers[Parser[+_]] { self =>
 
   def char(c: Char): Parser[Char] = string(c.toString) map (_.charAt(0))
 
-  def succeed[A](a: A): Parser[A] = string("") map (_ => a)
+  def succeed[A](a: A): Parser[A]
+
+  def defaultSucceed[A](a: A): Parser[A] = string("") map (_ => a)
 
   def or[A](p1: Parser[A], p2: => Parser[A]): Parser[A]
 

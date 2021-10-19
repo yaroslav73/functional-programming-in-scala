@@ -42,10 +42,11 @@ object Monoid {
     override def zero: Boolean = true
   }
 
-  def listMonoid[A]: Monoid[List[A]] = new Monoid[List[A]] {
-    override def op(a1: List[A], a2: List[A]): List[A] = a1 ++ a2
-    override def zero: List[A] = Nil
-  }
+  def listMonoid[A]: Monoid[List[A]] =
+    new Monoid[List[A]] {
+      override def op(a1: List[A], a2: List[A]): List[A] = a1 ++ a2
+      override def zero: List[A] = Nil
+    }
 
   // Uncomment code below:
   //  def optionMonoid[A: Monoid]: Monoid[Option[A]] = new Monoid[Option[A]] {
@@ -54,10 +55,13 @@ object Monoid {
   //    override def zero: Option[A] = None
   //  }
 
-  def endoMonoid[A]: Monoid[A => A] = new Monoid[A => A] {
-    override def op(a1: A => A, a2: A => A): A => A = a1 andThen a2
-    override def zero: A => A = (a: A) => a
-  }
+  // There is a choice of implementation here as well.
+  // Do we implement it as `f compose g` or `f andThen g`? We have to pick one.
+  def endoMonoid[A]: Monoid[A => A] =
+    new Monoid[A => A] {
+      override def op(f: A => A, g: A => A): A => A = f andThen g
+      override def zero: A => A = (a: A) => a
+    }
 
   // Solution from author:
   // Notice that we have a choice in how we implement `op`.
@@ -67,16 +71,18 @@ object Monoid {
   // `op` combines things in the opposite order. Monoids like `booleanOr` and
   // `intAddition` are equivalent to their duals because their `op` is commutative
   // as well as associative.
-  def optionMonoid[A]: Monoid[Option[A]] = new Monoid[Option[A]] {
-    def op(x: Option[A], y: Option[A]): Option[A] = x orElse y
-    val zero: Option[A] = None
-  }
+  def optionMonoid[A]: Monoid[Option[A]] =
+    new Monoid[Option[A]] {
+      def op(x: Option[A], y: Option[A]): Option[A] = x orElse y
+      val zero: Option[A] = None
+    }
 
   // We can get the dual of any monoid just by flipping the `op`.
-  def dual[A](m: Monoid[A]): Monoid[A] = new Monoid[A] {
-    def op(x: A, y: A): A = m.op(y, x)
-    val zero: A = m.zero
-  }
+  def dual[A](m: Monoid[A]): Monoid[A] =
+    new Monoid[A] {
+      def op(x: A, y: A): A = m.op(y, x)
+      val zero: A = m.zero
+    }
 
   // Now we can have both monoids on hand:
   def firstOptionMonoid[A]: Monoid[Option[A]] = optionMonoid[A]

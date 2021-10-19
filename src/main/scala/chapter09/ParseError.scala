@@ -1,8 +1,7 @@
 package chapter09
 
-case class ParseError(errors: List[(Location, String)]) {
-
-
+case class ParseError(errors: List[(Location, String)] = List()) {
+  def push(location: Location, msg: String): ParseError = copy(errors = (location, msg) :: errors)
 }
 
 case class Location(input: String, offset: Int = 0) {

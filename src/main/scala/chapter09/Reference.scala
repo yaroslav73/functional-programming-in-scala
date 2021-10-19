@@ -10,7 +10,13 @@ object ReferenceTypes {
   /** A parser is a kind of state action that can fail. */
   type Parser[+A] = Location => Result[A]
 
-  trait Result[+A]
+  sealed trait Result[+A] {
+    def mapError(f: ParseError => ParseError): Result[A] =
+      this match {
+        case Failure(error) => Failure(f(error))
+        case _              => this
+      }
+  }
   final case class Success[+A](value: A, charsConsumed: Int) extends Result[A]
   final case class Failure[+A](error: ParseError) extends Result[Nothing]
 
@@ -45,7 +51,7 @@ object Reference extends Parsers[Parser] {
 
   override def label[A](msg: String)(p: Parser[A]): Parser[A] = ???
 
-  override def scope[A](msg: String)(p: Parser[A]): Parser[A] = ???
+  override def scope[A](msg: String)(p: Parser[A]): Parser[A] = location => p(location).mapError(_.push(location, msg))
 
   override def attempt[A](p: Parser[A]): Parser[A] = ???
 

@@ -87,4 +87,13 @@ object Monoid {
   // Now we can have both monoids on hand:
   def firstOptionMonoid[A]: Monoid[Option[A]] = optionMonoid[A]
   def lastOptionMonoid[A]: Monoid[Option[A]] = dual(firstOptionMonoid)
+
+  def foldMapV[A, B](as: IndexedSeq[A], m: Monoid[B])(f: A => B): B = {
+    if (as.isEmpty) m.zero
+    else if (as.length == 1) f(as.head)
+    else {
+      val (p1, p2) = as.splitAt(as.length / 2)
+      m.op(foldMapV(p1, m)(f), foldMapV(p2, m)(f))
+    }
+  }
 }

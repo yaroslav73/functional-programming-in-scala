@@ -96,4 +96,24 @@ object Monoid {
       m.op(foldMapV(p1, m)(f), foldMapV(p2, m)(f))
     }
   }
+
+  /*
+   * Hard: Use foldMap to detect whether a given IndexedSeq[Int] is ordered.
+   * You’ll need to come up with a creative Monoid.
+   */
+  def ordered(ints: IndexedSeq[Int]): Boolean = {
+    val m = new Monoid[Option[(Int, Int, Boolean)]] {
+      override def op(o1: Option[(Int, Int, Boolean)], o2: Option[(Int, Int, Boolean)]): Option[(Int, Int, Boolean)] = {
+        (o1, o2) match {
+          case (Some((x1, y1, p)), Some((x2, y2, q))) => Some((x1 min x2, y1 max y2, p && q && y1 <= x2))
+          case (x, None)                              => x
+          case (None, x)                              => x
+        }
+      }
+
+      override def zero: Option[(Int, Int, Boolean)] = None
+    }
+
+    Folding.foldMap(ints.toList, m)(i => Some((i, i, true))).forall { case (_, _, p) => p }
+  }
 }

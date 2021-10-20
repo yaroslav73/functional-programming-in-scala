@@ -116,4 +116,10 @@ object Monoid {
 
     Folding.foldMap(ints.toList, m)(i => Some((i, i, true))).forall { case (_, _, p) => p }
   }
+
+  def main(args: Array[String]): Unit = {
+    println(ordered(IndexedSeq(1, 2, 3, 4)))
+    println(ordered(IndexedSeq(7, 2, 8, 3)))
+    println(ordered(IndexedSeq(7, 6, 5, 5)))
+  }
 }

@@ -117,9 +117,51 @@ object Monoid {
     Folding.foldMap(ints.toList, m)(i => Some((i, i, true))).forall { case (_, _, p) => p }
   }
 
+  def productMonoid[A, B](A: Monoid[A], B: Monoid[B]): Monoid[(A, B)] =
+    new Monoid[(A, B)] {
+      def op(a: (A, B), b: (A, B)): (A, B) =
+        (a, b) match {
+          case ((a1, a2), (b1, b2)) => (A.op(a1, b1), B.op(a2, b2))
+        }
+
+      def zero: (A, B) = (A.zero, B.zero)
+    }
+
+  def mapMergeMonoid[K, V](V: Monoid[V]): Monoid[Map[K, V]] =
+    new Monoid[Map[K, V]] {
+      def op(a: Map[K, V], b: Map[K, V]): Map[K, V] =
+        (a.keySet ++ b.keySet).foldLeft(zero) { (acc, k) =>
+          acc.updated(k, V.op(a.getOrElse(k, V.zero), b.getOrElse(k, V.zero)))
+        }
+
+      def zero: Map[K, V] = Map.empty
+    }
+
+  def functionMonoid[A, B](B: Monoid[B]): Monoid[A => B] =
+    new Monoid[A => B] {
+      def op(f: A => B, g: A => B): A => B = a => B.op(f(a), g(a))
+      def zero: A => B = _ => B.zero
+    }
+
+  def bag[A](as: IndexedSeq[A]): Map[A, Int] =
+    foldMapV(as, mapMergeMonoid[A, Int](intAddition))(a => Map(a -> 1))
+
   def main(args: Array[String]): Unit = {
     println(ordered(IndexedSeq(1, 2, 3, 4)))
     println(ordered(IndexedSeq(7, 2, 8, 3)))
     println(ordered(IndexedSeq(7, 6, 5, 5)))
+
+    val M: Monoid[Map[String, Map[String, Int]]] = mapMergeMonoid(mapMergeMonoid(intAddition))
+    val m1 = Map("o1" -> Map("i1" -> 1, "i2" -> 2))
+    val m2 = Map("o1" -> Map("i2" -> 3))
+    val m3 = M.op(m1, m2)
+    println(m3)
+
+    val b = bag(Vector("a", "rose", "is", "a", "rose"))
+    println(b)
+
+    val PM: Monoid[(Int, Int)] = productMonoid(intAddition, intAddition)
+    val p = Foldable.FoldableList.foldMap(List(1, 2, 3, 4))(a => (1, a))(PM)
+    println(s"p: $p, p mean: ${ val (a, b) = p; b / a }")
   }
 }

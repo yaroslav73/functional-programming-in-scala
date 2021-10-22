@@ -11,5 +11,13 @@ trait Monad[F[_]] extends Functor[F] {
 }
 
 object Monad {
+  val optionMonad: Monad[Option] = new Monad[Option] {
+    def unit[A](a: => A): Option[A] = Option(a)
+    def flatMap[A, B](fa: Option[A])(f: A => Option[B]): Option[B] = fa.flatMap(f)
+  }
 
+  val listMonad: Monad[List] = new Monad[List] {
+    def unit[A](a: => A): List[A] = List.empty[A]
+    def flatMap[A, B](fa: List[A])(f: A => List[B]): List[B] = fa.flatMap(f)
+  }
 }

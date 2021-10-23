@@ -9,11 +9,12 @@ trait Monad[F[_]] extends Functor[F] {
   def map2[A, B, C](fa: F[A], fb: F[B])(f: (A, B) => C): F[C] =
     flatMap(fa)(a => map(fb)(b => f(a, b)))
 
+  // TODO: notice flatMap inside foldLeft - it's looks like map2 :)
   def sequence[A](lfa: List[F[A]]): F[List[A]] =
     lfa.foldLeft(unit(List.empty[A]))((acc, fa) => flatMap(fa)(a => map(acc)(list => list :+ a)))
 
   def traverse[A, B](la: List[A])(f: A => F[B]): F[List[B]] =
-    sequence(la.map(f))
+    la.foldRight(unit(List.empty[B]))((a, acc) => map2(f(a), acc)((b, lb) => b :: lb))
 }
 
 object Monad {

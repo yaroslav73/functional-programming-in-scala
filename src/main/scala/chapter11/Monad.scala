@@ -1,5 +1,7 @@
 package chapter11
 
+import chapter06.State
+
 trait Monad[F[_]] extends Functor[F] {
   def unit[A](a: => A): F[A]
   def flatMap[A, B](fa: F[A])(f: A => F[B]): F[B]
@@ -27,4 +29,10 @@ object Monad {
     def unit[A](a: => A): List[A] = List.empty[A]
     def flatMap[A, B](fa: List[A])(f: A => List[B]): List[B] = fa.flatMap(f)
   }
+
+  def stateMonad[S]: Monad[({ type F[X] = State[S, X] })#F] =
+    new Monad[({ type F[X] = State[S, X] })#F] {
+      def unit[A](a: => A): State[S, A] = State(s => (a, s))
+      def flatMap[A, B](fa: State[S, A])(f: A => State[S, B]): State[S, B] = fa.flatMap(f)
+    }
 }

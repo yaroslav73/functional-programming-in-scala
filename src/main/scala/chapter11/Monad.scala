@@ -22,6 +22,12 @@ trait Monad[F[_]] extends Functor[F] {
   def replicateM[A](n: Int, fa: F[A]): F[List[A]] =
     sequence(List.fill(n)(fa))
 
+  def filterM[A](la: List[A])(f: A => F[Boolean]): F[List[A]] =
+    la match {
+      case Nil => unit(List.empty[A])
+      case h :: t => map2(f(h), filterM(t)(f))((b, l) => if (b) h :: l else l)
+    }
+
   def product[A, B](fa: F[A], fb: F[B]): F[(A, B)] =
     map2(fa, fb)((a, b) => a -> b)
 }

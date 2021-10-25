@@ -24,12 +24,15 @@ trait Monad[F[_]] extends Functor[F] {
 
   def filterM[A](la: List[A])(f: A => F[Boolean]): F[List[A]] =
     la match {
-      case Nil => unit(List.empty[A])
+      case Nil    => unit(List.empty[A])
       case h :: t => map2(f(h), filterM(t)(f))((b, l) => if (b) h :: l else l)
     }
 
   def product[A, B](fa: F[A], fb: F[B]): F[(A, B)] =
     map2(fa, fb)((a, b) => a -> b)
+
+  def compose[A, B, C](f: A => F[B], g: B => F[C]): A => F[C] =
+    a => flatMap(f(a))(b => g(b))
 }
 
 object Monad {

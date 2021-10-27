@@ -10,17 +10,4 @@ object Id {
     def unit[A](a: => A): Id[A] = Id(a)
     def flatMap[A, B](fa: Id[A])(f: A => Id[B]): Id[B] = fa.flatMap(f)
   }
-
-  def main(args: Array[String]): Unit = {
-    val hello = Id("Hello, ")
-    val monad = Id("Monad!")
-
-    val res = hello flatMap { a =>
-      monad flatMap { b =>
-        Id(a + b)
-      }
-    }
-
-    println(res)
-  }
 }

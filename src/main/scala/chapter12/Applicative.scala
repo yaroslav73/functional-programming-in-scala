@@ -15,11 +15,10 @@ trait Applicative[F[_]] extends Functor[F] {
     as.foldRight(unit(List.empty[B]))((a, acc) => map2(f(a), acc)(_ :: _))
 
   def sequence[A](fas: List[F[A]]): F[List[A]] =
-    fas.foldLeft(unit(List.empty[A]))((acc, a) => map2(acc, a)((l, a) => a :: l))
+    traverse(fas)(identity)
 
   def replicateM[A](n: Int, fa: F[A]): F[List[A]] =
-    if (n <= 0) unit(List.empty[A])
-    else map2(fa, replicateM(n - 1, fa))((a, acc) => a :: acc)
+    sequence(List.fill(n)(fa))
 
   def product[A, B](fa: F[A], fb: F[B]): F[(A, B)] =
     map2(fa, fb) { case (a, b) => (a, b) }

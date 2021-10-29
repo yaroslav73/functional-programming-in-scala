@@ -4,12 +4,15 @@ import chapter11.Functor
 
 trait Applicative[F[_]] extends Functor[F] {
   // primitive combinators
+  def ap[A, B](f: F[A => B])(fa: F[A]): F[B] = map2(fa, f)((a, f) => f(a))
   def unit[A](a: => A): F[A]
-  def map2[A, B, C](fa: F[A], fb: F[B])(f: (A, B) => C): F[C]
 
   // derived combinators
+  def map2[A, B, C](fa: F[A], fb: F[B])(f: (A, B) => C): F[C] =
+    ap(ap(unit(f.curried))(fa))(fb) // -> is the same as ap(map(fa)(f.curried))(fb)
+
   def map[A, B](fa: F[A])(f: A => B): F[B] =
-    map2(fa, unit(()))((a, _) => f(a))
+    ap(unit(f))(fa)
 
   def traverse[A, B](as: List[A])(f: A => F[B]): F[List[B]] =
     as.foldRight(unit(List.empty[B]))((a, acc) => map2(f(a), acc)(_ :: _))

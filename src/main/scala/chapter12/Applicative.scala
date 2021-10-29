@@ -8,11 +8,17 @@ trait Applicative[F[_]] extends Functor[F] {
   def unit[A](a: => A): F[A]
 
   // derived combinators
+  def map[A, B](fa: F[A])(f: A => B): F[B] =
+    ap(unit(f))(fa)
+
   def map2[A, B, C](fa: F[A], fb: F[B])(f: (A, B) => C): F[C] =
     ap(ap(unit(f.curried))(fa))(fb) // -> is the same as ap(map(fa)(f.curried))(fb)
 
-  def map[A, B](fa: F[A])(f: A => B): F[B] =
-    ap(unit(f))(fa)
+  def map3[A, B, C, D](fa: F[A], fb: F[B], fc: F[C])(f: (A, B, C) => D): F[D] =
+    ap(ap(ap(unit(f.curried))(fa))(fb))(fc)
+
+  def map4[A, B, C, D, E](fa: F[A], fb: F[B], fc: F[C], fd: F[D])(f: (A, B, C, D) => E): F[E] =
+    ap(ap(ap(ap(unit(f.curried))(fa))(fb))(fc))(fd)
 
   def traverse[A, B](as: List[A])(f: A => F[B]): F[List[B]] =
     as.foldRight(unit(List.empty[B]))((a, acc) => map2(f(a), acc)(_ :: _))

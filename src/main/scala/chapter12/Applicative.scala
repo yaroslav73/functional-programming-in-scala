@@ -32,3 +32,28 @@ trait Applicative[F[_]] extends Functor[F] {
   def product[A, B](fa: F[A], fb: F[B]): F[(A, B)] =
     map2(fa, fb) { case (a, b) => (a, b) }
 }
+
+object Applicative {
+  val lazyListApplicative: Applicative[LazyList] = new Applicative[LazyList] {
+    def unit[A](a: => A): LazyList[A] = LazyList.continually(a) // The infinite, constant stream
+
+    override def map2[A, B, C](fa: LazyList[A], fb: LazyList[B])(f: (A, B) => C): LazyList[C] =
+      fa.zip(fb).map(f.tupled)
+
+    override def sequence[A](fas: List[LazyList[A]]): LazyList[List[A]] =
+      fas.foldRight(unit(List.empty[A]))((acc, a) => map2(acc, a)((a, b) => a :: b))
+  }
+
+  def main(args: Array[String]): Unit = {
+    val ll1 = LazyList.continually("a")
+    val ll2 = LazyList.continually("b")
+    val ll3 = LazyList.continually("c")
+
+    val lll = List(ll1, ll2, ll3)
+
+    println(lll)
+    println(lll.flatMap(_.take(3).toList))
+    println(lll.map(_.take(3).toList))
+    println(lazyListApplicative.sequence(lll).take(4).toList)
+  }
+}

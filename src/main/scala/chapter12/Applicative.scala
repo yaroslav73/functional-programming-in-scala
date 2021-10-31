@@ -70,6 +70,17 @@ object Applicative {
       fas.foldRight(unit(List.empty[A]))((acc, a) => map2(acc, a)((a, b) => a :: b))
   }
 
+  implicit val listApplicative: Applicative[List] = new Applicative[List] {
+    override def unit[A](a: => A): List[A] = List(a)
+  }
+
+  implicit val optionApplicative: Applicative[Option] = new Applicative[Option] {
+    override def unit[A](a: => A): Option[A] = Option(a)
+
+    override def map2[A, B, C](fa: Option[A], fb: Option[B])(f: (A, B) => C): Option[C] =
+      fa.zip(fb).map { case (a, b) => f(a, b) }
+  }
+
   def main(args: Array[String]): Unit = {
     val ll1 = LazyList.continually("a")
     val ll2 = LazyList.continually("b")

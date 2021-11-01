@@ -1,5 +1,6 @@
 package chapter12
 
+import chapter06.State
 import chapter10.{Foldable, Monoid}
 import chapter11.Functor
 
@@ -16,9 +17,6 @@ trait Traverse[F[_]] extends Functor[F] with Foldable[F] {
   def map[A, B](fa: F[A])(f: A => B): F[B] =
     traverse[Id, A, B](fa)(f)(idMonad)
 
-  override def foldMap[A, M](as: F[A])(f: A => M)(mb: Monoid[M]): M =
-    traverse[({type f[x] = Const[M, x]})#f, A, Nothing](as)(f)(monoidApplicative(mb))
-
   type Id[A] = A
 
   val idMonad: Monad[Id] = new Monad[Id] {
@@ -26,12 +24,27 @@ trait Traverse[F[_]] extends Functor[F] with Foldable[F] {
     override def flatMap[A, B](fa: Id[A])(f: A => Id[B]): Id[B] = f(fa)
   }
 
+  override def foldMap[A, M](as: F[A])(f: A => M)(mb: Monoid[M]): M =
+    traverse[({ type f[x] = Const[M, x] })#f, A, Nothing](as)(f)(monoidApplicative(mb))
+
   type Const[M, B] = M
 
   implicit def monoidApplicative[M](M: Monoid[M]): Applicative[({ type f[x] = Const[M, x] })#f] =
     new Applicative[({ type f[x] = Const[M, x] })#f] {
       def unit[A](a: => A): M = M.zero
     }
+
+  def traverseS[S, A, B](fa: F[A])(f: A => State[S, B]): State[S, F[B]] =
+    traverse[({ type f[x] = State[S, x] })#f, A, B](fa)(f)(Monad.stateMonad)
+
+//  TODO: temporary not working :(
+//  def zipWithIndex[A](fa: F[A]): F[(A, Int)] =
+//    traverseS(fa) { (a: A) =>
+//      for {
+//        i <- get[Int]
+//        _ <- set(i + 1)
+//      } yield (a, i)
+//    }.run(0)._1
 }
 
 object Traverse {

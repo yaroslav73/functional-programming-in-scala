@@ -14,6 +14,8 @@ object EffectExample extends App {
       case None                  => "It's a draw!"
     }
 
-  def contest(p1: Player, p2: Player): Unit =
-    println(winnerMsg(winner(p1, p2)))
+  def PrintLine(msg: String): IO = () => println(msg)
+
+  def contest(p1: Player, p2: Player): IO =
+    PrintLine(winnerMsg(winner(p1, p2)))
 }

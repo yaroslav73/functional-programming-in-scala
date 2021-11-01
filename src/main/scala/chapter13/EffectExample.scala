@@ -8,9 +8,12 @@ object EffectExample extends App {
     else if (p2.score > p1.score) Some(p2)
     else None
 
-  def contest(p: Option[Player]): Unit =
+  def winnerMsg(p: Option[Player]): String =
     p match {
-      case Some(Player(name, _)) => println(s"$name is the winner!")
-      case None                  => println("It's a draw!")
+      case Some(Player(name, _)) => s"$name is the winner!"
+      case None                  => "It's a draw!"
     }
+
+  def contest(p1: Player, p2: Player): Unit =
+    println(winnerMsg(winner(p1, p2)))
 }

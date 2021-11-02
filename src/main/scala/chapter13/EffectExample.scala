@@ -1,5 +1,7 @@
 package chapter13
 
+import scala.io.StdIn
+
 object EffectExample extends App {
   final case class Player(name: String, score: Int)
 
@@ -14,8 +16,24 @@ object EffectExample extends App {
       case None                  => "It's a draw!"
     }
 
-  def PrintLine(msg: String): IO = () => println(msg)
+  def PrintLine(msg: String): IO[Unit] = new IO[Unit] { def run: Unit = println(msg) }
+  def ReadLine: IO[String] = new IO[String] { def run: String = StdIn.readLine() }
 
-  def contest(p1: Player, p2: Player): IO =
+  def contest(p1: Player, p2: Player): IO[Unit] =
     PrintLine(winnerMsg(winner(p1, p2)))
+
+  val p1 = Player("Ann", 73)
+  val p2 = Player("Den", 72)
+  contest(p1, p2).run
+
+  def fahrenheitToCelsius(f: Double): Double = (f - 32) * 5.0 / 9.0
+
+  def convert: IO[Unit] =
+    for {
+      _ <- PrintLine("Enter the temperature in degrees Fahrenheit: ")
+      t <- ReadLine.map(_.toDouble)
+      _ <- PrintLine(fahrenheitToCelsius(t).toString)
+    } yield ()
+
+  convert.run
 }

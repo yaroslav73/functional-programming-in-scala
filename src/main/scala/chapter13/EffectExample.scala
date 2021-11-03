@@ -36,4 +36,33 @@ object EffectExample extends App {
     } yield ()
 
   convert.run
+
+  val helpString = """
+  | The Amazing Factorial REPL, v2.0
+  | q - quit
+  | <number> - compute the factorial of the given number
+  | <anything else> - bomb with horrible error
+  """.trim.stripMargin
+
+  def factorial(n: Int): IO[Int] =
+    for {
+      acc <- IO.ref(1)
+      _ <- IO.foreachM[Int]((1 to n).to(LazyList))(i => acc.modify(_ * i).skip)
+      result <- acc.get
+    } yield result
+
+  def factorialREPL: IO[Unit] =
+    IO.sequence_(
+      PrintLine(helpString),
+      IO.doWhile { ReadLine } { line =>
+        IO.when(!line.equalsIgnoreCase("q")) {
+          for {
+            n <- factorial(line.toInt)
+            _ <- PrintLine(s"Factorial: $n")
+          } yield ()
+        }
+      }
+    )
+
+  factorialREPL.run
 }

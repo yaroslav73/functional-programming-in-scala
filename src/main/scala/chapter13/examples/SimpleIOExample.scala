@@ -1,8 +1,10 @@
-package chapter13
+package chapter13.examples
+
+import chapter13._01_simple_io.IO
 
 import scala.io.StdIn
 
-object EffectExample extends App {
+object SimpleIOExample extends App {
   final case class Player(name: String, score: Int)
 
   def winner(p1: Player, p2: Player): Option[Player] =
@@ -16,8 +18,8 @@ object EffectExample extends App {
       case None                  => "It's a draw!"
     }
 
-  def PrintLine(msg: String): IO[Unit] = Return { println(msg) }
-  def ReadLine: IO[String] = Return { StdIn.readLine() }
+  def PrintLine(msg: String): IO[Unit] = IO { println(msg) }
+  def ReadLine: IO[String] = IO { StdIn.readLine() }
 
   def contest(p1: Player, p2: Player): IO[Unit] =
     PrintLine(winnerMsg(winner(p1, p2)))
@@ -25,8 +27,7 @@ object EffectExample extends App {
   val p1 = Player("Ann", 73)
   val p2 = Player("Den", 72)
 
-//  TODO: uncomment to run contest
-//  contest(p1, p2).run
+  contest(p1, p2).run
 
   def fahrenheitToCelsius(f: Double): Double = (f - 32) * 5.0 / 9.0
 
@@ -37,8 +38,7 @@ object EffectExample extends App {
       _ <- PrintLine(fahrenheitToCelsius(t).toString)
     } yield ()
 
-//  TODO: uncomment to run convert
-//  convert.run
+  convert.run
 
   val helpString = """
   | The Amazing Factorial REPL, v2.0
@@ -67,19 +67,5 @@ object EffectExample extends App {
       }
     )
 
-//  TODO: uncomment to run factorial REPL
-//  factorialREPL.run
-
-  val p = IO.forever(PrintLine("Still going..."))
-  IO.run(p)
-
-  val f: Int => IO[Int] = (i: Int) => Return(i)
-
-  val g: Int => IO[Int] =
-    List.fill(10000)(f).foldLeft(f){
-      (a: Function1[Int, IO[Int]],
-       b: Function1[Int, IO[Int]]) => {
-        (x: Int) => IO.suspend(a(x).flatMap(b))
-      }
-    }
+  factorialREPL.run
 }

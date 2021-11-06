@@ -1,8 +1,6 @@
 package chapter07
-import scala.annotation.tailrec
 import scala.concurrent.duration.TimeUnit
 
-trait Par[A] {}
 
 object Par {
   type Par[A] = ExecutorService => Future[A]
@@ -12,6 +10,12 @@ object Par {
 
   def map[A, B](pa: Par[A])(f: A => B): Par[B] =
     map2(pa, unit(()))((a, _) => f(a))
+
+  def flatMap[A, B](p: Par[A])(choices: A => Par[B]): Par[B] =
+    es => {
+      val k = run(es)(p).get
+      run(es)(choices(k))
+    }
 
   // Combines the result of two parallel computations with a binary function.
   def map2[A, B, C](pa: Par[A], pb: Par[B])(f: (A, B) => C): Par[C] =

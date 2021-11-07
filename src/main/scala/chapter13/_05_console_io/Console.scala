@@ -34,5 +34,5 @@ object Console {
 
   def readLn: ConsoleIO[Option[String]] = Suspend(ReadLine)
 
-  def printLn(line: String): ConsoleIO[Unit] = Return(PrintLine(line))
+  def printLn(line: String): ConsoleIO[Unit] = Suspend(PrintLine(line))
 }

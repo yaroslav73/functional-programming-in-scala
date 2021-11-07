@@ -63,8 +63,11 @@ object Free {
     }
 
   def translate[F[_], G[_]: Monad, A](free: Free[F, A])(fg: F ~> G): Free[G, A] = {
-    val instance = implicitly[Monad[G]]
-    Suspend(runFree(free)(fg)(instance))
+    type FreeG[A] = Free[G, A]
+    val fToFreeG = new (F ~> FreeG) {
+      def apply[A](f: F[A]): FreeG[A] = Suspend(fg(f))
+    }
+    runFree(free)(fToFreeG)(freeMonad[G])
   }
 
   implicit val function0Monad: Monad[Function0] = new Monad[Function0] {
@@ -85,5 +88,9 @@ object Free {
     runFree[Console, Par, A](a)(consoleToPar)
 
   def runConsole[A](a: Free[Console, A]): A =
-    runTrampoline(translate(a)(consoleToFunction0))
+    runTrampoline {
+      translate(a)(new (Console ~> Function0) {
+        def apply[A](f: Console[A]): () => A = f.toThunk
+      })
+    }
 }

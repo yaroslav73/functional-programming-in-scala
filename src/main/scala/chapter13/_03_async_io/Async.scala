@@ -42,7 +42,7 @@ object Async extends Monad[Async] {
     }
 
   def run[A](io: Async[A]): Par[A] =
-    io match {
+    step(io) match {
       case Return(a)       => Par.unit(a)
       case Suspend(resume) => resume
       case FlatMap(sub, f) =>

@@ -21,4 +21,7 @@ object ST {
     lazy val cache = a
     (s: S) => (cache, s)
   }
+
+  def runST[A](runnableST: RunnableST[A]): A =
+    runnableST.apply[Unit].run(())._1
 }

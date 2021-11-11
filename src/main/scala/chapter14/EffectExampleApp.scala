@@ -16,4 +16,6 @@ object EffectExampleApp extends App {
   }
 
   println(ST.runST(p))
+
+//  println(ST.runST())
 }

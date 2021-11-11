@@ -10,14 +10,26 @@ sealed abstract class STArray[S, A](implicit manifest: Manifest[A]) {
 
   def read(i: Int): ST[S, A] = ST(value(i))
 
+  def fill(xs: Map[Int, A]): ST[S, Unit] =
+    xs.foldLeft(ST[S, Unit](())) {
+      case (acc, (i, a)) => acc.flatMap(_ => write(i, a))
+    }
+
   def freeze: ST[S, List[A]] = ST(value.toList)
 }
 
 object STArray {
   def apply[S, A: Manifest](sz: Int, v: A): ST[S, STArray[S, A]] =
-    ST {
+    ST(
       new STArray[S, A] {
         protected lazy val value: Array[A] = Array.fill(sz)(v)
       }
-    }
+    )
+
+  def fromList[S, A: Manifest](xs: List[A]): ST[S, STArray[S, A]] =
+    ST(
+      new STArray[S, A] {
+        protected lazy val value: Array[A] = xs.toArray
+      }
+    )
 }

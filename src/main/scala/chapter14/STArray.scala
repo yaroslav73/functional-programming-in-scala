@@ -15,6 +15,14 @@ sealed abstract class STArray[S, A](implicit manifest: Manifest[A]) {
       case (acc, (i, a)) => acc.flatMap(_ => write(i, a))
     }
 
+  def swap(i: Int, j: Int): ST[S, Unit] =
+    for {
+      x <- read(i)
+      y <- read(j)
+      _ <- write(j, x)
+      _ <- write(i, y)
+    } yield ()
+
   def freeze: ST[S, List[A]] = ST(value.toList)
 }
 

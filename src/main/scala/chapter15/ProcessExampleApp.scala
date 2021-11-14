@@ -16,4 +16,16 @@ object ProcessExampleApp extends App {
 
   val s = Process.sum(LazyList(1, 2, 3, 4, 5)).toList
   println(s)
+
+  val take = Process.take(3)(LazyList(1, 2, 3, 4, 5)).toList
+  println(s"Take 3: $take")
+
+  val drop = Process.drop(3)(LazyList(1, 2, 3, 4, 5)).toList
+  println(s"Drop 3: $drop")
+
+  val takeWhile = Process.takeWhile((x: Int) => x <= 3)(LazyList(1, 2, 3, 4, 5)).toList
+  println(s"Take while _ <= 4: $takeWhile")
+
+  val dropWhile = Process.dropWhile((x: Int) => x <= 3)(LazyList(1, 2, 3, 4, 5)).toList
+  println(s"Drop while _ <= 4: $dropWhile")
 }

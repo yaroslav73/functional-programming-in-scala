@@ -48,6 +48,37 @@ object Process {
       case _                       => Halt()
     }.repeat
 
+  def take[I](n: Int): Process[I, I] = {
+    def loop(n: Int): Process[I, I] =
+      Await {
+        case Some(value) if n != 0 => Emit(value, loop(n - 1))
+        case _                     => Halt()
+      }
+
+    loop(n)
+  }
+
+  def drop[I](n: Int): Process[I, I] = {
+    def loop(n: Int): Process[I, I] =
+      Await {
+        case Some(_) if n != 0 => loop(n - 1)
+        case Some(value)       => Emit(value, loop(n))
+        case _                 => Halt()
+      }
+
+    loop(n)
+  }
+
+  def takeWhile[I](p: I => Boolean): Process[I, I] = filter(p)
+
+  def dropWhile[I](p: I => Boolean): Process[I, I] = {
+    Await[I, I] {
+      case Some(value) if p(value) => dropWhile(p)
+      case Some(value)             => Emit(value)
+      case _                       => Halt()
+    }.repeat
+  }
+
   def sum: Process[Double, Double] = {
     def loop(acc: Double): Process[Double, Double] =
       Await {

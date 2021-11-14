@@ -28,4 +28,10 @@ object ProcessExampleApp extends App {
 
   val dropWhile = Process.dropWhile((x: Int) => x <= 3)(LazyList(1, 2, 3, 4, 5)).toList
   println(s"Drop while _ <= 4: $dropWhile")
+
+  val count = Process.count(LazyList("a", "b", "c")).toList
+  println(s"Count: $count")
+
+  val mean = Process.mean(LazyList(1, 2, 3, 4, 5)).toList
+  println(s"Mean: $mean")
 }

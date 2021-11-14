@@ -16,3 +16,11 @@ sealed trait Process[I, O] {
 case class Emit[I, O](head: O, tail: Process[I, O] = Halt[I, O]()) extends Process[I, O]
 case class Await[I, O](recovery: Option[I] => Process[I, O]) extends Process[I, O]
 case class Halt[I, O]() extends Process[I, O]
+
+object Process {
+  def liftOne[I, O](f: I => O): Process[I, O] =
+    Await {
+      case Some(value) => Emit(f(value))
+      case None        => Halt()
+    }
+}

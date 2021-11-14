@@ -1,9 +1,19 @@
 package chapter15
 
 object ProcessExampleApp extends App {
-  val p = Process.liftOne((x: Int) => x * 2)
+  val p01 = Process.liftOne((x: Int) => x * 2)
 
-  val xs = p(LazyList(1, 2, 3)).toList
+  val xs01 = p01(LazyList(1, 2, 3)).toList
+  println(xs01)
 
-  println(xs)
+  val p02 = Process.lift((x: Int) => x * 2)
+  val xs02 = p02(LazyList(1, 2, 3)).toList
+  println(xs02)
+
+  val even = Process.filter((x: Int) => x % 2 == 0)
+  val evens = even(LazyList(1, 2, 3, 4)).toList
+  println(evens)
+
+  val s = Process.sum(LazyList(1, 2, 3, 4, 5)).toList
+  println(s)
 }

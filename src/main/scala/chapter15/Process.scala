@@ -108,4 +108,13 @@ object Process {
 
     loop(0, 0)
   }
+
+  def loop[S, I, O](z: S)(f: (I, S) => (O, S)): Process[I, O] =
+    Await {
+      case Some(i) =>
+        f(i, z) match {
+          case (o, s2) => Emit(o, loop(s2)(f))
+        }
+      case None => Halt()
+    }
 }

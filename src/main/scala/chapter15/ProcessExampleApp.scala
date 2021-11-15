@@ -14,8 +14,8 @@ object ProcessExampleApp extends App {
   val evens = even(LazyList(1, 2, 3, 4)).toList
   println(evens)
 
-  val s = Process.sum(LazyList(1, 2, 3, 4, 5)).toList
-  println(s)
+  val sum = Process.sum(LazyList(1, 2, 3, 4, 5)).toList
+  println(s"Sum: $sum")
 
   val take = Process.take(3)(LazyList(1, 2, 3, 4, 5)).toList
   println(s"Take 3: $take")

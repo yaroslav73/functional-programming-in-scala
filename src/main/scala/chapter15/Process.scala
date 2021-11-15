@@ -79,25 +79,11 @@ object Process {
     }.repeat
   }
 
-  def count[I]: Process[I, Int] = {
-    def loop(counter: Int): Process[I, Int] =
-      Await {
-        case Some(_) => Emit(counter, loop(counter + 1))
-        case _       => Emit(counter)
-      }
+  def count[I]: Process[I, Int] =
+    loop(0)((_, s) => (s + 1, s + 1))
 
-    loop(0)
-  }
-
-  def sum: Process[Double, Double] = {
-    def loop(acc: Double): Process[Double, Double] =
-      Await {
-        case Some(value) => Emit(acc + value, loop(acc + value))
-        case None        => Halt()
-      }
-
-    loop(0.0)
-  }
+  def sum: Process[Double, Double] =
+    loop(0.0)((i, s) => (i + s, i + s))
 
   def mean: Process[Double, Double] = {
     def loop(counter: Int, acc: Double): Process[Double, Double] =

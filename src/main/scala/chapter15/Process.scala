@@ -26,6 +26,18 @@ sealed trait Process[I, O] {
 
     loop(this)
   }
+
+  def |>[O2](p: Process[O, O2]): Process[I, O2] =
+    p match {
+      case Halt()           => Halt()
+      case Emit(head, tail) => Emit(head, this |> tail)
+      case Await(f) =>
+        this match {
+          case Emit(head, tail) => tail |> f(Some(head))
+          case Await(g)         => Await(i => g(i) |> p)
+          case Halt()           => Halt[I, O]() |> f(None)
+        }
+    }
 }
 
 case class Emit[I, O](head: O, tail: Process[I, O] = Halt[I, O]()) extends Process[I, O]

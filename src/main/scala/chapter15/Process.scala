@@ -1,5 +1,7 @@
 package chapter15
 
+import chapter15.Process.lift
+
 sealed trait Process[I, O] {
   def apply(in: LazyList[I]): LazyList[O] =
     this match {
@@ -37,6 +39,22 @@ sealed trait Process[I, O] {
           case Await(g)         => Await(i => g(i) |> p)
           case Halt()           => Halt[I, O]() |> f(None)
         }
+    }
+
+  def map[O2](f: O => O2): Process[I, O2] = this |> lift(f)
+
+  def flatMap[O2](f: O => Process[I, O2]): Process[I, O2] =
+    this match {
+      case Halt()           => Halt()
+      case Emit(head, tail) => f(head) ++ tail.flatMap(f)
+      case Await(recovery)  => Await(recovery.andThen(_ flatMap f))
+    }
+
+  def ++(p: Process[I, O]): Process[I, O] =
+    this match {
+      case Halt()           => p
+      case Emit(head, tail) => Emit(head, tail ++ p)
+      case Await(recovery)  => Await(recovery.andThen(_ ++ p))
     }
 }
 

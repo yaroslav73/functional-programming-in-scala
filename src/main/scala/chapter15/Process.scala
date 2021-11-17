@@ -1,6 +1,7 @@
 package chapter15
 
-import chapter15.Process.lift
+import chapter13.Monad
+import chapter15.Process.{lift, loop}
 
 sealed trait Process[I, O] {
   def apply(in: LazyList[I]): LazyList[O] =
@@ -56,6 +57,21 @@ sealed trait Process[I, O] {
       case Emit(head, tail) => Emit(head, tail ++ p)
       case Await(recovery)  => Await(recovery.andThen(_ ++ p))
     }
+
+  def zipWithIndex: Process[I, (O, Int)] = {
+    def loop(n: Int, p: Process[I, O]): Process[I, (O, Int)] =
+      p match {
+        case Halt()           => Halt()
+        case Emit(head, tail) => Emit((head, n), loop(n + 1, tail))
+        case Await(recovery) =>
+          Await {
+            case None => Halt()
+            case elem => loop(n, recovery(elem))
+          }
+      }
+
+    loop(0, this)
+  }
 }
 
 case class Emit[I, O](head: O, tail: Process[I, O] = Halt[I, O]()) extends Process[I, O]
@@ -132,5 +148,11 @@ object Process {
           case (o, s2) => Emit(o, loop(s2)(f))
         }
       case None => Halt()
+    }
+
+  def monad[I]: Monad[({ type f[x] = Process[I, x] })#f] =
+    new Monad[({ type f[x] = Process[I, x] })#f] {
+      def unit[A](a: => A): Process[I, A] = Emit(a)
+      def flatMap[A, B](a: Process[I, A])(f: A => Process[I, B]): Process[I, B] = a.flatMap(f)
     }
 }

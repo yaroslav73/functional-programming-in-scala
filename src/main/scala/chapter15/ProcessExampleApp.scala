@@ -34,4 +34,7 @@ object ProcessExampleApp extends App {
 
   val mean = Process.mean(LazyList(1, 2, 3, 4, 5)).toList
   println(s"Mean: $mean")
+
+  val zipWithIndexed = Process.take(3).zipWithIndex(LazyList("a", "b", "c")).toList
+  println(s"ZipWithIndexed: $zipWithIndexed")
 }

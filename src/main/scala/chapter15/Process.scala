@@ -150,6 +150,22 @@ object Process {
       case None => Halt()
     }
 
+  def zip[A, B, C](p1: Process[A, B], p2: Process[A, C]): Process[A, (B, C)] =
+    (p1, p2) match {
+      case (Halt(), _)                => Halt()
+      case (_, Halt())                => Halt()
+      case (Emit(b, t1), Emit(c, t2)) => Emit((b, b), zip(t1, t2))
+      case (Await(recovery), _)       => Await((oa: Option[A]) => zip(recovery(oa), feed(oa)(p2)))
+      case (_, Await(recovery))       => Await((oa: Option[A]) => zip(feed(oa)(p1), recovery(oa)))
+    }
+
+  private def feed[A, B](oa: Option[A])(p: Process[A, B]): Process[A, B] =
+    p match {
+      case Halt()           => Halt()
+      case Await(recovery)  => recovery(oa)
+      case Emit(head, tail) => Emit(head, feed(oa)(tail))
+    }
+
   def monad[I]: Monad[({ type f[x] = Process[I, x] })#f] =
     new Monad[({ type f[x] = Process[I, x] })#f] {
       def unit[A](a: => A): Process[I, A] = Emit(a)

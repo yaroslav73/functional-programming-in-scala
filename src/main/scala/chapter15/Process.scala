@@ -125,6 +125,8 @@ object Process {
     }.repeat
   }
 
+  def exists[I](f: I => Boolean): Process[I, Boolean] = loop(false)((i, s) => (f(i), s))
+
   def count[I]: Process[I, Int] =
     loop(0)((_, s) => (s + 1, s + 1))
 

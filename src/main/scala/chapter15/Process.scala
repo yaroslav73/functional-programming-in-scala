@@ -1,7 +1,11 @@
 package chapter15
 
 import chapter13.Monad
+import chapter13._02_io_without_so.IO
 import chapter15.Process.{lift, loop}
+
+import java.io.File
+import scala.annotation.tailrec
 
 sealed trait Process[I, O] {
   def apply(in: LazyList[I]): LazyList[O] =
@@ -156,9 +160,27 @@ object Process {
     (p1, p2) match {
       case (Halt(), _)                => Halt()
       case (_, Halt())                => Halt()
-      case (Emit(b, t1), Emit(c, t2)) => Emit((b, b), zip(t1, t2))
+      case (Emit(b, t1), Emit(c, t2)) => Emit((b, c), zip(t1, t2))
       case (Await(recovery), _)       => Await((oa: Option[A]) => zip(recovery(oa), feed(oa)(p2)))
       case (_, Await(recovery))       => Await((oa: Option[A]) => zip(feed(oa)(p1), recovery(oa)))
+    }
+
+  def processFile[A, B](f: File, p: Process[String, A], z: B)(g: (B, A) => B): IO[B] =
+    IO {
+      @tailrec
+      def loop(ss: Iterator[String], cur: Process[String, A], acc: B): B = {
+        cur match {
+          case Halt()           => acc
+          case Emit(head, tail) => loop(ss, tail, g(acc, head))
+          case Await(recovery) =>
+            val next = if (ss.hasNext) recovery(Some(ss.next())) else recovery(None)
+            loop(ss, next, acc)
+        }
+      }
+
+      val s = io.Source.fromFile(f)
+      try loop(s.getLines(), p, z)
+      finally s.close()
     }
 
   private def feed[A, B](oa: Option[A])(p: Process[A, B]): Process[A, B] =

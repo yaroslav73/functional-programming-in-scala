@@ -1,5 +1,9 @@
 package chapter15
 
+import chapter13._02_io_without_so.IO
+
+import java.io.File
+
 object ProcessExampleApp extends App {
   val p01 = Process.liftOne((x: Int) => x * 2)
 
@@ -37,4 +41,8 @@ object ProcessExampleApp extends App {
 
   val zipWithIndexed = Process.take(3).zipWithIndex(LazyList("a", "b", "c")).toList
   println(s"ZipWithIndexed: $zipWithIndexed")
+
+  val file = new File("src/main/resources/Fahrenheit.txt")
+  val result = Process.processFile(file, Process.count.|>(Process.exists(_ > 20)), false)(_ || _)
+  println(s"Fahrenheit.txt count exist _ > 20? = ${IO.run(result)}")
 }

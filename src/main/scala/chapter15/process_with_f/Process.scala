@@ -1,5 +1,9 @@
 package chapter15.process_with_f
 
+import chapter13._02_io_without_so.IO
+
+import scala.annotation.tailrec
+
 trait Process[F[_], O] {
   import Process._
 
@@ -47,4 +51,24 @@ object Process {
 
   def await[F[_], A, O](request: F[A])(recovery: Either[Throwable, A] => Process[F, O]): Process[F, O] =
     Await(request, recovery)
+
+  def runLog[O](src: Process[IO, O]): IO[IndexedSeq[O]] =
+    IO {
+      val E = java.util.concurrent.Executors.newFixedThreadPool(4)
+      @tailrec
+      def loop(cur: Process[IO, O], acc: IndexedSeq[O]): IndexedSeq[O] =
+        cur match {
+          case Emit(head, tail) => loop(tail, acc :+ head)
+          case Halt(End)        => acc
+          case Halt(error)      => throw error
+          case Await(request, recovery) =>
+            val next =
+              try recovery(Right(IO.run(request)))
+              catch { case error: Throwable => recovery(Left(error)) }
+            loop(next, acc)
+        }
+
+      try loop(src, IndexedSeq.empty[O])
+      finally E.shutdown()
+    }
 }

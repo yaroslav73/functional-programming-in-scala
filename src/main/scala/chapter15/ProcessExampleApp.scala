@@ -45,4 +45,12 @@ object ProcessExampleApp extends App {
   val file = new File("src/main/resources/Fahrenheit.txt")
   val result = Process.processFile(file, Process.count.|>(Process.exists(_ > 20)), false)(_ || _)
   println(s"Fahrenheit.txt count exist _ > 20? = ${IO.run(result)}")
+
+  def convertFahrenheit: Process[String, String] =
+    Process.filter((line: String) => !line.startsWith("#")) |>
+      Process.filter(line => line.trim.nonEmpty) |>
+      Process.lift(line => toCelsius(line.toDouble).toString)
+
+  def toCelsius(fahrenheit: Double): Double =
+    (5.0 / 9.0) * (fahrenheit - 32.0)
 }

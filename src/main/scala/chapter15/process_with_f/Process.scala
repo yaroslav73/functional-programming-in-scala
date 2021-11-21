@@ -15,6 +15,13 @@ trait Process[F[_], O] {
       case End   => p
       case error => Halt(error)
     }
+
+  def flatMap[O2](f: O => Process[F, O2]): Process[F, O2] =
+    this match {
+      case Halt(error)              => Halt(error)
+      case Emit(head, tail)         => Try(f(head) ++ tail.flatMap(f))
+      case Await(request, recovery) => Await(request, recovery.andThen(_.flatMap(f)))
+    }
 }
 
 object Process {
